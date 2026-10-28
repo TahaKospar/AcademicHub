@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "161124645940",
+    "project_id": "tester-6e491",
+    "storage_bucket": "tester-6e491.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:161124645940:android:ac1c3437c510466055de61",
+        "android_client_info": {
+          "package_name": "com.example.academichub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-s5tEjsF7rbZsKeVDAtge8pd181x_Vho"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
