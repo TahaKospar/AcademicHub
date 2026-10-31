@@ -1,8 +1,8 @@
 import 'package:academichub/business_logic/auth/cubit/auth_cubit.dart';
 import 'package:academichub/data/repository/auth_repository.dart';
 import 'package:academichub/data/services/authService.dart';
-import 'package:academichub/presentation/widgets/loginWidget.dart';
-import 'package:academichub/presentation/widgets/registerWidget.dart';
+import 'package:academichub/presentation/widgets/login_widget.dart';
+import 'package:academichub/presentation/widgets/register_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -150,7 +150,7 @@ class _AuthscreenState extends State<Authscreen> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: Container(
-                    color: Colors.grey[200],
+                    color: const Color.fromRGBO(238, 238, 238, 1),
                     child: PageView(
                       controller: _controller,
                       onPageChanged: (index) {

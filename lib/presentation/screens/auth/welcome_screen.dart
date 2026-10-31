@@ -142,7 +142,7 @@ class _WelcomescreenState extends State<Welcomescreen> {
             ),
             SizedBox(height: med * 0.17),
             AnimatedSwitcher(
-              duration: const Duration(microseconds: 300),
+              duration: const Duration(milliseconds: 300),
               transitionBuilder: (Widget child, Animation<double> animation) {
                 return ScaleTransition(scale: animation, child: child);
               },
@@ -186,7 +186,7 @@ class _WelcomescreenState extends State<Welcomescreen> {
                             backgroundColor: Colors.blueAccent,
                             onPressed: () {
                               _controller.nextPage(
-                                duration: const Duration(microseconds: 300),
+                                duration: const Duration(milliseconds: 300),
                                 curve: Curves.easeInOut,
                               );
                             },

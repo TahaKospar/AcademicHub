@@ -1,3 +1,4 @@
+import 'package:academichub/constants/strings/strings.dart';
 import 'package:flutter/material.dart';
 
 class Homescreen extends StatefulWidget {
@@ -43,7 +44,23 @@ class _HomescreenState extends State<Homescreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Container(color: Colors.blue[100], child: ListView()),
+        child: Container(
+          color: Colors.blue[100],
+          child: ListView(
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    authScreen,
+                    (route) => false,
+                  );
+                },
+                icon: Icon(Icons.import_contacts),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

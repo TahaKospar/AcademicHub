@@ -1,0 +1,2889 @@
+# AcademicHub
+
+## Complete Product Vision, Requirements, UI/UX, System Architecture & Development Specification
+
+**Project Name:** AcademicHub
+**Product Category:** Multi-Academy Learning Management & Student Engagement Platform
+**Initial Target Market:** English Language Academies in Egypt
+**Primary Application:** Cross-platform mobile application
+**Administrative Interface:** Web-based dashboard
+**Mobile Technology:** Flutter
+**Proposed Backend:** Firebase
+**Primary Goal:** Build a professional, scalable, customizable platform that academies can adopt under their own branding to organize student learning, schedules, assignments, educational materials, instructor feedback, communication, and administrative operations.
+
+---
+
+# PART 1 — YOUR ROLE AND MISSION
+
+Act as a senior product manager, software architect, Flutter engineer, backend engineer, UI/UX designer, database designer, security engineer, and QA engineer.
+
+Your responsibility is to help design and build AcademicHub as a coherent, production-oriented software product rather than a collection of disconnected screens.
+
+You must understand the complete business idea, preserve the product requirements, and make sure that the interface, application logic, database, authentication, permissions, and administrative dashboard work together.
+
+Do not focus exclusively on making attractive UI screens.
+
+The application must have:
+
+* A clear business purpose.
+* Well-defined user roles.
+* Consistent navigation.
+* Functional user journeys.
+* Real authentication and authorization.
+* A structured database.
+* Reliable data relationships.
+* Working communication features.
+* Meaningful progress tracking.
+* Instructor and administrative workflows.
+* A customizable academy identity.
+* A maintainable Flutter architecture.
+* Proper loading, empty, error, and success states.
+* Security and data isolation between academies.
+
+If the project already contains source code, Figma designs, or existing application screens, inspect them before making changes.
+
+Preserve existing working functionality whenever possible.
+
+Do not create replacement screens when the task is to improve existing screens. Improve the existing designs and components directly while preserving the established application structure unless a change is necessary and justified.
+
+Never claim that a feature works unless it has actually been implemented and tested.
+
+If a requirement is ambiguous, distinguish between confirmed requirements and proposed improvements. Do not silently change the product vision.
+
+---
+
+# PART 2 — PRODUCT OVERVIEW
+
+## 2.1 What Is AcademicHub?
+
+AcademicHub is a customizable digital learning and student-management platform designed initially for English language academies.
+
+The platform gives students, instructors, and academy administrators a shared digital environment in which they can manage their learning experience without relying on multiple disconnected applications and communication channels.
+
+Instead of requiring students to navigate between WhatsApp groups, separate websites, manually shared documents, external task links, and scattered instructor messages, AcademicHub organizes the essential learning activities in one application.
+
+The platform connects four major areas:
+
+1. Student learning management.
+2. Educational materials and assignments.
+3. Instructor feedback and student progress.
+4. Communication and academy administration.
+
+AcademicHub is not intended to be a single application permanently tied to one academy.
+
+It should be designed as a reusable platform that can serve multiple academies, with each academy able to configure its identity, logo, colors, courses, groups, instructors, schedules, and educational content.
+
+For example, one academy could use AcademicHub with its own name and blue branding, while another academy could use the same underlying platform with a different name, logo, and color palette.
+
+The platform should keep each academy's information securely separated.
+
+## 2.2 Product Vision
+
+Create a professional learning environment that makes the student's educational journey clearer, more organized, and easier to follow while giving instructors and academy administrators better tools to manage the learning process.
+
+## 2.3 Product Mission
+
+Transform a fragmented academy learning experience into a centralized digital experience where students know:
+
+* What they should study.
+* What they need to complete today.
+* When their next lecture takes place.
+* Which materials they need.
+* How they are progressing.
+* What their instructor thinks about their work.
+* Where they can communicate with their group.
+* What they need to improve.
+
+At the same time, instructors should be able to manage their students, review their work, provide feedback, organize group communication, and monitor progress.
+
+Academy administrators should be able to manage the overall system through a dedicated web dashboard.
+
+## 2.4 The Problem AcademicHub Solves
+
+Many language academies combine several tools to deliver their educational experience.
+
+A typical student might receive a lecture schedule through one channel, educational files through another, task links through messages, reminders through group conversations, and instructor feedback through private messages or voice notes.
+
+This can create several problems:
+
+* Students may forget their daily tasks.
+* Important messages can disappear inside group conversations.
+* Students may not know what they need to complete next.
+* Educational materials become difficult to find.
+* Instructors may struggle to track individual student progress.
+* Feedback can become scattered across different conversations.
+* Academy administrators may lack a unified overview of learning activities.
+* The student experience may depend too heavily on manual communication.
+* Different academies may need the same core system with different branding and content.
+
+AcademicHub addresses these problems by organizing the experience around a clear set of interconnected features.
+
+## 2.5 Product Positioning
+
+AcademicHub should be presented as:
+
+**A customizable digital learning and student engagement platform for language academies.**
+
+It should not be positioned merely as:
+
+* A simple educational app.
+* A video meeting application.
+* A chat application.
+* A static calendar.
+* A collection of educational links.
+* A generic university management system.
+
+The product's value comes from integrating these essential learning workflows into one coherent platform.
+
+---
+
+# PART 3 — TARGET USERS AND USER ROLES
+
+AcademicHub must support three primary roles:
+
+1. Student.
+2. Instructor.
+3. Academy Support / Administrator.
+
+Each role has different responsibilities, permissions, and interface requirements.
+
+A user must never gain access to functionality merely because a screen or button is visible. All permissions must also be enforced by the backend.
+
+## 3.1 Student
+
+The student is the primary mobile application user.
+
+Students use AcademicHub to organize their learning activities and interact with their academy.
+
+The student can:
+
+* Sign in or create an account.
+* Join the appropriate academy.
+* Access assigned courses and groups.
+* View their learning plan.
+* Browse a calendar of educational tasks.
+* View daily and upcoming tasks.
+* Open assigned external practice links.
+* Mark tasks as completed when permitted.
+* Access course materials and files.
+* Participate in group discussions.
+* Communicate with instructors through supported channels.
+* Receive instructor feedback.
+* Listen to instructor voice feedback when available.
+* Track their learning progress.
+* Receive notifications and reminders.
+* Update their profile and preferences.
+* Change the application theme.
+* Manage notification preferences.
+* View relevant course and group information.
+
+Students must only access their own private information and content available to their assigned courses and groups.
+
+They must not be able to modify instructor evaluations or access another student's private records.
+
+## 3.2 Instructor
+
+The instructor is responsible for managing assigned groups and supporting student learning.
+
+The instructor interface should prioritize practical teaching workflows instead of unnecessary administrative complexity.
+
+Instructors can:
+
+* Sign in to their instructor account.
+* View assigned groups.
+* View students belonging to their assigned groups.
+* Access group schedules.
+* View relevant educational tasks.
+* Create and manage tasks when authorized.
+* Attach educational resources when authorized.
+* Review student task submissions when submissions are supported.
+* Record task completion or review status.
+* Provide written feedback.
+* Record or upload voice feedback.
+* Identify pronunciation issues through instructor observations.
+* Track student progress.
+* Communicate with students and groups.
+* Review relevant student activity.
+* View upcoming lectures and tasks.
+
+Instructor permissions must be configurable.
+
+For example, an instructor may be allowed to review tasks but not modify academy-wide branding, manage subscriptions, or create new administrator accounts.
+
+Instructors must not automatically gain access to every student or every group in the platform.
+
+## 3.3 Academy Support / Administrator
+
+The academy support role primarily uses a web dashboard.
+
+This role is responsible for organizing and managing the academy's digital environment.
+
+The dashboard should allow authorized administrators to:
+
+* Configure academy information.
+* Upload the academy logo.
+* Configure branding and theme colors.
+* Manage students.
+* Manage instructors.
+* Create and manage courses.
+* Create and manage student groups.
+* Assign instructors to groups.
+* Assign students to groups.
+* Configure schedules.
+* Manage tasks and educational materials.
+* Manage academy announcements.
+* Review high-level progress information.
+* Manage access codes.
+* Handle account-related support.
+* Review relevant activity logs.
+* Configure notification defaults.
+* Manage permissions where authorized.
+
+The administrator should not need to manually edit application source code every time an academy changes its logo, adds a course, or creates a student group.
+
+Those settings should be managed through the dashboard and delivered dynamically to the mobile application.
+
+## 3.4 Future Platform-Level Administration
+
+The system architecture should allow a future platform owner role.
+
+This role would manage the overall AcademicHub service rather than a single academy.
+
+Potential responsibilities include:
+
+* Creating academy tenants.
+* Managing platform-wide configuration.
+* Managing academy activation.
+* Monitoring service health.
+* Managing platform-level subscription plans.
+* Handling platform-level administrative operations.
+
+This is a future extensibility requirement, not necessarily part of the first MVP.
+
+Do not confuse a platform administrator with an academy administrator.
+
+---
+
+# PART 4 — MULTI-ACADEMY ARCHITECTURE
+
+## 4.1 Core Requirement
+
+AcademicHub must be designed for multiple academies from the beginning.
+
+Each academy represents a separate organizational tenant.
+
+A tenant can have its own:
+
+* Academy name.
+* Logo.
+* Branding colors.
+* Contact information.
+* Courses.
+* Groups.
+* Instructors.
+* Students.
+* Educational materials.
+* Tasks.
+* Schedules.
+* Announcements.
+* Communication spaces.
+* Administrative settings.
+
+## 4.2 Dynamic Branding
+
+The mobile application should load the relevant academy configuration after the student joins or signs in.
+
+The configuration may include:
+
+* Academy display name.
+* Logo URL.
+* Primary color.
+* Secondary color.
+* Accent color.
+* Course information.
+* Academy contact details.
+* Welcome message.
+* Optional academy-specific interface settings.
+
+The application should use a shared design system while applying academy-specific branding where appropriate.
+
+Branding changes must not break contrast, accessibility, component consistency, or usability.
+
+Administrators should not be able to inject arbitrary executable code or unrestricted custom HTML into the mobile application.
+
+## 4.3 Academy Isolation
+
+Every academy-specific record must be associated with the correct academy identifier.
+
+Examples include:
+
+* Students.
+* Groups.
+* Courses.
+* Tasks.
+* Materials.
+* Messages.
+* Feedback.
+* Notifications.
+* Schedules.
+
+The backend must validate academy membership and resource ownership.
+
+A student belonging to Academy A must not be able to access Academy B's private records by changing a document ID, API parameter, or client-side state.
+
+The system must enforce tenant isolation through backend authorization and database security rules, not through UI filtering alone.
+
+---
+
+# PART 5 — AUTHENTICATION AND ACCOUNT ACCESS
+
+## 5.1 Authentication Requirements
+
+AcademicHub should support:
+
+* Email and password registration.
+* Email and password login.
+* Password visibility toggle.
+* Password reset.
+* Sign-out.
+* Persistent authentication sessions.
+* Appropriate loading and error states.
+* Account profile management.
+
+Google and Microsoft sign-in should be supported as optional authentication methods when the relevant provider configuration and platform requirements are available.
+
+Do not display a provider login button as a working feature until its authentication flow has been implemented and tested.
+
+## 5.2 Registration Flow
+
+The registration form should include:
+
+* Full name.
+* Email address.
+* Password.
+* Confirm password.
+* Academy code or invitation code.
+* Acceptance of applicable terms and privacy policy.
+
+The academy code identifies the academy or invitation context.
+
+The backend must validate that the code is legitimate and that the account is eligible to join the academy.
+
+A user must not be able to join a private academy merely by entering an arbitrary academy identifier.
+
+The registration process should create the account and establish the correct academy membership.
+
+If the academy requires administrator approval, the system should support a pending-access state rather than granting unrestricted access immediately.
+
+## 5.3 Login Flow
+
+The login screen should support the intended account identifiers.
+
+The product may allow login using:
+
+* Email address.
+* Student ID, when student-ID authentication has been implemented.
+
+Student ID login must not be simulated by placing a student ID into an email field.
+
+If the backend uses Firebase Authentication, implement student-ID login through a secure, server-controlled mapping or another explicitly designed authentication mechanism.
+
+Never expose a privileged lookup mechanism that allows unauthorized users to enumerate accounts.
+
+The login screen should include:
+
+* Email or supported student identifier.
+* Password.
+* Show/hide password control.
+* Remembered authentication session.
+* Forgot password.
+* Sign-in action.
+* Optional Google sign-in.
+* Optional Microsoft sign-in.
+* Navigation to account creation.
+* Clear validation messages.
+
+## 5.4 Account Provisioning
+
+The academy may already maintain a list of students and instructors.
+
+The system should support importing existing academy records through the administrator dashboard.
+
+A recommended workflow is:
+
+1. The administrator creates or imports a student record.
+2. The system generates or assigns a unique student identifier.
+3. The student receives an invitation or access code.
+4. The student creates an account or links an existing account.
+5. The backend verifies the invitation.
+6. The system establishes academy membership.
+7. The student receives the correct group and course assignments.
+
+If a school or academy wants a simplified access-ID login without passwords, treat that as a separate authentication design decision requiring appropriate safeguards.
+
+Do not implement insecure authentication merely to reduce friction.
+
+---
+
+# PART 6 — ONBOARDING EXPERIENCE
+
+The mobile application must include three onboarding screens.
+
+The onboarding screens should explain the product's primary value in a concise, visually appealing way.
+
+The experience must feel like part of a professional educational product rather than a generic template.
+
+## Screen 1: Your Learning, Organized
+
+**Purpose:** Explain how AcademicHub organizes the student's educational activities.
+
+Suggested headline:
+
+"Your Learning, All in One Place"
+
+Suggested supporting text:
+
+"Keep your learning plan, educational resources, and upcoming tasks organized in one simple experience."
+
+Visual direction:
+
+* A modern learning dashboard illustration.
+* Calendar and task cards.
+* Subtle progress indicators.
+* Clean academic visual language.
+
+## Screen 2: Track Your Progress
+
+**Purpose:** Show how students can understand their learning progress.
+
+Suggested headline:
+
+"See How Far You've Come"
+
+Suggested supporting text:
+
+"Track completed tasks, review instructor feedback, and stay focused on your learning goals."
+
+Visual direction:
+
+* Progress rings or bars.
+* Completed-task cards.
+* Simple learning statistics.
+* Restrained use of green for completed states.
+
+## Screen 3: Learn Together
+
+**Purpose:** Explain the role of instructors and group communication.
+
+Suggested headline:
+
+"Stay Connected With Your Academy"
+
+Suggested supporting text:
+
+"Discuss learning activities with your group and receive guidance from your instructors."
+
+Visual direction:
+
+* Group discussion interface.
+* Instructor feedback card.
+* Message indicators.
+* A supportive but professional atmosphere.
+
+## Onboarding Controls
+
+Each onboarding screen should include:
+
+* Illustration.
+* Headline.
+* Supporting text.
+* Current-page indicator.
+* Next button.
+* Skip option where appropriate.
+* Final call to action leading to authentication.
+
+Onboarding should normally be shown only during the first relevant session.
+
+Store onboarding completion locally.
+
+Do not force users to repeat onboarding every time they open the application unless they explicitly restart the experience.
+
+---
+
+# PART 7 — COMPLETE MOBILE APPLICATION SCREEN ARCHITECTURE
+
+The initial mobile application design must preserve the established eleven-screen architecture.
+
+The eleven primary screens are:
+
+1. Onboarding — Resources.
+2. Onboarding — Progress.
+3. Onboarding — Community.
+4. Sign In.
+5. Create Account.
+6. Home — Student Dashboard.
+7. Plan — Calendar & Tasks.
+8. Materials — Course Files.
+9. Chat — Group Discussion.
+10. Feedback — Assignment Review.
+11. Profile — Settings.
+
+These are the eleven primary screen definitions, not a limit on the total number of screens.
+
+Detail screens, dialogs, search views, file previews, and other necessary secondary views may be added as required.
+
+The architecture must preserve the distinct purpose of each main destination.
+
+**Important navigation boundaries:**
+
+* Home focuses on the student's overview and progress.
+* Plan focuses on the calendar, schedule, and tasks.
+* Materials focuses on educational files and resources.
+* Chat focuses on communication and discussion.
+* Feedback focuses on instructor evaluation.
+* Profile focuses on account settings and preferences.
+
+Do not duplicate the entire content of one section inside another.
+
+---
+
+# PART 8 — HOME SCREEN: STUDENT DASHBOARD
+
+## 8.1 Purpose
+
+The Home screen gives students an immediate overview of their current learning situation.
+
+When a student opens the application, they should quickly understand:
+
+* What is happening today.
+* What needs attention.
+* What has been completed.
+* What is coming next.
+* Whether their instructor has provided important feedback.
+
+The screen should not feel like an administrative analytics dashboard.
+
+It should be a friendly, practical student workspace.
+
+## 8.2 Header
+
+The header should include:
+
+* Academy logo.
+* Personalized greeting.
+* Student display name.
+* Profile avatar or initials.
+* Notification icon with unread indicator.
+
+Example:
+
+"Good evening, Ahmed"
+
+Supporting text:
+
+"Ready to make progress today?"
+
+The name and greeting must be dynamic.
+
+Do not hardcode example student names in production data.
+
+## 8.3 Today's Overview
+
+Show a compact summary of today's learning activity.
+
+Possible indicators:
+
+* Tasks assigned today.
+* Tasks completed.
+* Remaining tasks.
+* Upcoming lecture.
+
+For example:
+
+"Today's Learning"
+
+* 4 tasks.
+* 2 completed.
+* 2 remaining.
+
+These values must be calculated from actual task data.
+
+Do not display invented progress percentages or random statistics.
+
+## 8.4 Progress Overview
+
+Provide a clear summary of the student's progress.
+
+Possible indicators:
+
+* Weekly task completion.
+* Course progress, when a course-completion model exists.
+* Recent activity.
+* Completed tasks.
+
+Do not confuse task completion with language proficiency.
+
+Completing 80% of assigned tasks does not mean that a student has achieved 80% English proficiency.
+
+Use accurate labels such as:
+
+* Weekly Task Completion.
+* Learning Activity.
+* Course Progress, only when a defined course-progress calculation exists.
+
+## 8.5 Upcoming Activities
+
+Display the next relevant events, such as:
+
+* An upcoming lecture.
+* A task deadline.
+* A scheduled practice activity.
+* An instructor review awaiting attention.
+
+Each item should show:
+
+* Activity title.
+* Relevant date and time.
+* Activity type.
+* Current status.
+* Appropriate navigation action.
+
+## 8.6 Recent Feedback
+
+Show a small preview of the latest instructor feedback.
+
+For example:
+
+* Feedback title.
+* Instructor name.
+* Date.
+* Short text preview.
+* Voice-feedback indicator, if available.
+* Action to open the full feedback.
+
+Do not duplicate the entire feedback-management experience on Home.
+
+The Home screen provides a preview; the Feedback screen provides the complete review workflow.
+
+## 8.7 Recent Announcements
+
+Display important academy announcements when relevant.
+
+Announcements may include:
+
+* Schedule changes.
+* Course updates.
+* Group notices.
+* Important deadlines.
+
+Only authorized academy personnel should publish official announcements.
+
+## 8.8 Empty State
+
+If a new student has no tasks or activity, show an intentional empty state.
+
+Example:
+
+"Your learning journey starts here."
+
+Supporting text:
+
+"Your upcoming activities will appear here when your academy assigns them."
+
+Do not fill the screen with fabricated tasks to make it look populated.
+
+---
+
+# PART 9 — PLAN SCREEN: CALENDAR AND TASK MANAGEMENT
+
+## 9.1 Purpose
+
+The Plan screen organizes the student's learning activities over time.
+
+It is the primary destination for answering:
+
+"What do I need to do today, and what comes next?"
+
+The Plan section must remain focused on scheduling and tasks.
+
+It is not the educational file library, the discussion room, or the instructor-feedback archive.
+
+## 9.2 Calendar Interface
+
+Provide a clear calendar interface with:
+
+* Monthly overview.
+* Weekly overview where appropriate.
+* Selected-day view.
+* Navigation between dates.
+* Indicators for dates containing tasks.
+* Indicators for upcoming lectures.
+* Clear distinction between completed and pending activities.
+
+The calendar must use actual assigned dates and the correct timezone.
+
+Avoid overloading the calendar with too many colors or decorative indicators.
+
+## 9.3 Task Categories
+
+Support the educational activity types used by the academy.
+
+Examples include:
+
+* Listening.
+* Reading.
+* Speaking practice.
+* Writing.
+* Vocabulary.
+* Grammar.
+* Pronunciation.
+* General practice.
+* Instructor-assigned work.
+
+The category list should be configurable so that the academy can adapt the platform to its curriculum.
+
+These categories describe the nature of a task, not necessarily the complete course structure.
+
+## 9.4 Task Model
+
+Each task should support relevant fields such as:
+
+* Task identifier.
+* Academy identifier.
+* Course identifier, if applicable.
+* Group identifier, if applicable.
+* Task title.
+* Description.
+* Category.
+* Assigned date.
+* Due date.
+* Estimated duration.
+* External practice URL, when applicable.
+* Attached resource references, when applicable.
+* Assigned student or group.
+* Task status.
+* Completion timestamp.
+* Creator identifier.
+* Creation timestamp.
+* Last-updated timestamp.
+
+Only fields relevant to the task type should be required.
+
+For example, a task that links to an external listening exercise may need a URL, while an instructor-reviewed writing task may need a submission workflow.
+
+## 9.5 Task Statuses
+
+Use a consistent task-status model.
+
+Suggested statuses:
+
+* Upcoming.
+* Pending.
+* In Progress.
+* Submitted, when submissions are supported.
+* Completed.
+* Overdue.
+* Needs Revision, when instructor review is supported.
+
+Do not use all statuses indiscriminately.
+
+Define the permitted transitions for each task type.
+
+For example, a simple external practice task may move from Pending to Completed.
+
+A writing assignment may move from Pending to Submitted, then Reviewed or Needs Revision.
+
+The application must distinguish between:
+
+* Student-confirmed completion.
+* Instructor-reviewed completion.
+* Automatically detected activity.
+
+These are not equivalent.
+
+## 9.6 Task Details
+
+When a student opens a task, show:
+
+* Task title.
+* Description.
+* Category.
+* Assigned date.
+* Due date.
+* Estimated duration.
+* Instructions.
+* External link or resource reference.
+* Current status.
+* Relevant submission controls.
+* Completion action, when permitted.
+
+If a task uses an external website, provide an appropriate action to open the link.
+
+Validate URLs and handle missing or invalid links safely.
+
+## 9.7 Completing a Task
+
+When a student marks a task as complete:
+
+1. Validate the action.
+2. Update the task's student-specific completion record.
+3. Store the completion timestamp.
+4. Refresh relevant progress indicators.
+5. Update the Home screen.
+6. Update calendar indicators.
+7. Recalculate the appropriate completion statistics.
+8. Provide a concise success message.
+
+If the task requires instructor verification, preserve the distinction between student completion and instructor approval.
+
+A student must not be able to mark another student's task complete.
+
+## 9.8 Task Assignment Rules
+
+Tasks may be assigned to:
+
+* An entire group.
+* A specific student.
+* A course cohort.
+* Another explicitly authorized audience.
+
+If a task is assigned to a group, the system should maintain individual completion records for each student.
+
+Do not store a single shared completion flag on the group task and assume that every student has completed it.
+
+This distinction is essential for accurate progress tracking.
+
+## 9.9 Task Reminders
+
+Students should be able to configure their preferred reminder time.
+
+For example, a student might choose 5:00 PM for daily learning reminders.
+
+The application should support:
+
+* Reminder enable/disable.
+* Preferred reminder time.
+* Relevant reminder frequency.
+* Appropriate handling of task deadlines.
+* Respect for device permissions.
+* Duplicate-notification prevention.
+
+A reminder should be useful rather than intrusive.
+
+Do not send notifications for every minor database update.
+
+---
+
+# PART 10 — MATERIALS SCREEN: EDUCATIONAL FILES AND RESOURCES
+
+## 10.1 Purpose
+
+The Materials screen provides an organized library of educational resources.
+
+It answers:
+
+"Where can I find the file, document, or learning resource I need?"
+
+This section must focus on educational content rather than task scheduling or discussion.
+
+## 10.2 Supported Resource Types
+
+The system should support references to resources such as:
+
+* PDF documents.
+* Images.
+* Audio recordings.
+* Video links.
+* Documents.
+* External educational websites.
+* Downloadable files.
+
+Actual support for previewing or downloading each format must be implemented and tested.
+
+Do not assume that every file type can be previewed natively by Flutter.
+
+## 10.3 Organization
+
+Resources may be organized by:
+
+* Course.
+* Group.
+* Topic.
+* Skill.
+* Resource category.
+* Publication date.
+
+Examples:
+
+* Listening Practice.
+* Reading Materials.
+* Grammar Notes.
+* Vocabulary Lists.
+* Speaking Resources.
+* General Course Files.
+
+## 10.4 Material Card
+
+Each material card should display:
+
+* Resource title.
+* File type or resource category.
+* Short description.
+* Associated course or group.
+* Publication date, when relevant.
+* File size, when available.
+* Relevant action.
+
+Actions may include:
+
+* Open.
+* Preview.
+* Download.
+* Open external link.
+
+Only show actions supported by the resource type and implementation.
+
+## 10.5 Search and Filtering
+
+Allow students to search resources by title and filter by relevant categories.
+
+Provide clear empty states when no resources match the query.
+
+Search should not expose resources belonging to another academy or an unauthorized group.
+
+## 10.6 Storage
+
+Use a suitable file-storage service.
+
+If Firebase is used, Cloud Storage for Firebase is a possible choice, subject to project configuration, current service requirements, and applicable pricing.
+
+Store file metadata in the database and file contents in the appropriate storage system.
+
+Avoid storing large binary files directly in Firestore documents.
+
+Use access-controlled file URLs or storage rules appropriate to the resource's visibility.
+
+---
+
+# PART 11 — CHAT SCREEN: REAL-TIME GROUP DISCUSSION
+
+## 11.1 Purpose
+
+AcademicHub must include a real chat feature.
+
+This must not be a decorative chat mockup or a screen containing only predefined sample messages.
+
+The Chat screen is the communication destination for students and authorized instructors.
+
+It should support meaningful group discussion related to the educational experience.
+
+## 11.2 Chat Types
+
+The initial implementation should prioritize:
+
+1. Group chat.
+2. Instructor-to-student communication, subject to the configured permissions.
+
+Private student-to-student messaging should not be enabled automatically.
+
+The academy should be able to control which communication types are allowed.
+
+## 11.3 Chat List
+
+The main Chat screen should display the conversations available to the current user.
+
+Each conversation item may contain:
+
+* Group or conversation name.
+* Conversation avatar.
+* Last-message preview.
+* Last-message timestamp.
+* Unread-message indicator.
+* Relevant participant information.
+
+Only conversations that the user is authorized to access should appear.
+
+## 11.4 Conversation Screen
+
+The conversation interface should support:
+
+* Real-time message delivery.
+* Text messages.
+* Message timestamps.
+* Sender identification.
+* Read or delivery indicators where supported.
+* Unread-message handling.
+* Message history.
+* Loading older messages.
+* Appropriate empty states.
+* Network error handling.
+* Sending and receiving states.
+
+The interface must remain usable when messages are long or when the keyboard is open.
+
+## 11.5 Additional Message Types
+
+The architecture may support:
+
+* Images.
+* File attachments.
+* Voice messages.
+* System announcements.
+
+These features should be introduced according to the MVP priorities and security requirements.
+
+Do not implement every possible message type in the first version if doing so would compromise the reliability of the core text-chat experience.
+
+## 11.6 Permissions
+
+The backend must verify:
+
+* The sender belongs to the academy.
+* The sender is a member of the conversation or group.
+* The sender has permission to post.
+* The recipient or group belongs to the same authorized context.
+* The referenced attachments are accessible to the intended audience.
+
+A client must not be able to impersonate another sender by changing a user ID in a message payload.
+
+The backend should establish the authenticated sender identity.
+
+## 11.7 Chat Notifications
+
+Users should receive appropriate notifications for relevant new messages when notifications are enabled.
+
+Avoid notifying a user about their own messages.
+
+Prevent duplicate notifications where possible.
+
+Allow users to control notification preferences according to the academy's communication policy.
+
+## 11.8 Chat Versus Feedback
+
+Keep the chat and feedback workflows separate.
+
+Chat is for conversation and questions.
+
+Feedback is for structured instructor evaluation and review.
+
+A chat message should not automatically be treated as an official task evaluation.
+
+---
+
+# PART 12 — FEEDBACK SCREEN: INSTRUCTOR REVIEW AND EVALUATION
+
+## 12.1 Purpose
+
+The Feedback screen provides a structured record of instructor feedback.
+
+It answers:
+
+"What did my instructor review, and what should I improve?"
+
+This is not simply another chat conversation.
+
+Feedback should be attached to an identifiable task, submission, learning activity, or other explicitly defined review item.
+
+## 12.2 Feedback Types
+
+Support:
+
+* Written feedback.
+* Voice feedback.
+* Task-review status.
+* Relevant performance observations.
+* Improvement suggestions.
+* Review timestamps.
+
+Additional feedback formats may be introduced when justified by the learning workflow.
+
+## 12.3 Feedback Item
+
+A feedback item should include:
+
+* Feedback identifier.
+* Academy identifier.
+* Student identifier.
+* Instructor identifier.
+* Related task or submission identifier, where applicable.
+* Written feedback.
+* Voice-recording reference, if present.
+* Review status.
+* Creation timestamp.
+* Last-updated timestamp.
+
+Do not require a related task for every possible feedback item if the product explicitly supports general student feedback.
+
+## 12.4 Voice Feedback
+
+Instructors should be able to record or upload voice feedback when authorized.
+
+Students should be able to:
+
+* Play.
+* Pause.
+* Resume.
+* Review the recording duration.
+* Identify which task or submission the recording relates to.
+
+Voice files must be stored using appropriate storage permissions.
+
+The database should store metadata and the relevant protected resource reference.
+
+The interface must handle unavailable files, playback errors, and loading states.
+
+## 12.5 Instructor Evaluation Workflow
+
+A typical workflow is:
+
+1. An instructor opens a student's assigned work.
+2. The instructor reviews the relevant activity or submission.
+3. The instructor records the evaluation.
+4. The instructor adds written feedback.
+5. The instructor optionally attaches voice feedback.
+6. The instructor saves the review.
+7. The student receives an appropriate notification.
+8. The feedback appears in the student's Feedback section.
+9. Relevant task status and progress indicators update according to the defined rules.
+
+Do not automatically convert every feedback item into a numerical grade.
+
+Grades should only exist when the academy has defined a grading model.
+
+## 12.6 Pronunciation Feedback
+
+AcademicHub initially supports instructor-provided pronunciation feedback.
+
+For example, an instructor might explain the difference between two similar English sounds or identify a specific pronunciation issue.
+
+Do not claim that AcademicHub automatically evaluates pronunciation unless an actual speech-analysis feature has been implemented.
+
+Automatic speech recognition and pronunciation assessment may be considered as future extensions.
+
+---
+
+# PART 13 — PROFILE AND SETTINGS
+
+## 13.1 Purpose
+
+The Profile screen manages the student's personal account and application preferences.
+
+It should not duplicate the full learning dashboard.
+
+## 13.2 Profile Information
+
+Display relevant information such as:
+
+* Student name.
+* Profile image or initials.
+* Student identifier, if applicable.
+* Academy name.
+* Assigned course.
+* Group name.
+* Account information.
+
+Only display fields that the user is authorized to access.
+
+## 13.3 Editable Information
+
+Allow the student to update permitted fields.
+
+Potential editable fields include:
+
+* Display name.
+* Profile picture.
+* Preferred reminder time.
+* Theme preference.
+* Notification preferences.
+
+Changes to academy membership, role, group assignment, or other privileged fields must require authorized administrative actions.
+
+## 13.4 Theme Settings
+
+Support:
+
+* Light mode.
+* Dark mode.
+* Optional system-default mode.
+
+Persist the preference so it remains consistent between sessions.
+
+All screens and shared components must support both themes.
+
+Dark mode must not be implemented by simply changing the page background while leaving unreadable text, icons, borders, or cards.
+
+## 13.5 Notification Settings
+
+Allow the student to configure:
+
+* Task reminders.
+* Upcoming activity reminders.
+* Chat notifications.
+* Instructor feedback notifications.
+* Relevant academy announcements.
+
+Respect device notification permissions and platform limitations.
+
+Explain when a setting requires operating-system permission.
+
+## 13.6 Account Actions
+
+Include:
+
+* Edit profile.
+* Change password, where supported.
+* Sign out.
+* Privacy information.
+* Terms of service.
+* Account deletion or deletion-request workflow, where required and supported.
+
+Account deletion must be handled securely and consistently with the system's retention requirements.
+
+Do not merely delete a local authentication session while leaving the user believing that their account has been deleted.
+
+---
+
+# PART 14 — WEB ADMINISTRATION DASHBOARD
+
+## 14.1 Purpose
+
+The web dashboard is the main administrative interface for managing an academy's AcademicHub environment.
+
+It should be designed for desktop productivity while remaining reasonably responsive on smaller screens.
+
+The dashboard must connect to the same underlying backend used by the mobile application.
+
+Changes made by authorized administrators should be reflected in the appropriate mobile views.
+
+Do not implement the dashboard as a static HTML page containing hardcoded sample data.
+
+## 14.2 Dashboard Navigation
+
+The proposed navigation structure includes:
+
+1. Overview.
+2. Students.
+3. Instructors.
+4. Courses.
+5. Groups.
+6. Schedule.
+7. Tasks.
+8. Materials.
+9. Feedback and Reviews.
+10. Announcements.
+11. Chat Administration, if permitted.
+12. Notifications.
+13. Academy Branding.
+14. Access Codes and Invitations.
+15. Reports.
+16. Settings.
+
+Some sections may be combined in the MVP to reduce complexity.
+
+The final navigation should reflect actual implemented functionality.
+
+## 14.3 Overview
+
+Display a concise summary of academy activity.
+
+Possible metrics:
+
+* Total active students.
+* Total instructors.
+* Number of active groups.
+* Upcoming lectures.
+* Tasks assigned.
+* Task completion statistics.
+* Recent activity.
+* Pending administrative actions.
+
+Metrics must be calculated from actual database records.
+
+Clearly distinguish between:
+
+* Total accounts.
+* Active accounts.
+* Enrolled students.
+* Students with recent activity.
+
+Do not display fake statistics.
+
+## 14.4 Student Management
+
+Administrators should be able to:
+
+* View students.
+* Search students.
+* Filter students.
+* Open student details.
+* Assign students to courses.
+* Assign students to groups.
+* Review relevant learning activity.
+* Update permitted account information.
+* Generate or assign student identifiers.
+* Issue or revoke invitations when authorized.
+* Manage account status when supported.
+
+Use pagination or efficient query strategies for larger datasets.
+
+Do not retrieve every student record into the browser and filter everything locally when the dataset could become large.
+
+## 14.5 Instructor Management
+
+Administrators should be able to:
+
+* View instructors.
+* Create or invite instructor accounts.
+* Assign instructors to groups.
+* View instructor-group relationships.
+* Manage relevant permissions.
+* Disable or revoke access when authorized.
+
+An instructor must not automatically become an academy administrator.
+
+## 14.6 Course Management
+
+Administrators should be able to:
+
+* Create courses.
+* Edit course information.
+* Configure course categories.
+* Assign instructors where relevant.
+* Assign student groups.
+* Publish or archive courses.
+* Associate materials and tasks with courses.
+
+Course structures must be configurable rather than hardcoded to one English curriculum.
+
+## 14.7 Group Management
+
+Administrators should be able to:
+
+* Create groups.
+* Assign instructors.
+* Assign students.
+* View group membership.
+* Configure group schedules.
+* Manage group-specific resources.
+* Configure group communication permissions.
+
+The data model must support multiple groups and prevent inconsistent assignments.
+
+## 14.8 Schedule Management
+
+Administrators should be able to:
+
+* Create lectures or scheduled activities.
+* Configure dates and times.
+* Assign a group.
+* Assign an instructor.
+* Modify schedules.
+* Record cancellations or rescheduling.
+* Notify relevant users when appropriate.
+
+The initial product may assume that each group follows a recurring schedule, but individual schedule changes must also be supported.
+
+Store timestamps consistently and display them in the appropriate local timezone.
+
+## 14.9 Task Management
+
+Administrators and authorized instructors should be able to:
+
+* Create tasks.
+* Edit tasks.
+* Assign tasks to groups or individual students.
+* Configure due dates.
+* Add descriptions.
+* Configure categories.
+* Attach or reference resources.
+* Add external practice links.
+* Publish tasks.
+* Archive tasks.
+* Review task completion.
+
+Changes to published tasks must be handled consistently so that existing student completion records are not accidentally destroyed.
+
+## 14.10 Materials Management
+
+Administrators should be able to:
+
+* Upload resources.
+* Add external links.
+* Edit resource metadata.
+* Assign materials to courses or groups.
+* Publish or archive materials.
+* Control resource visibility.
+
+File uploads should include:
+
+* Appropriate type and size validation.
+* Upload progress.
+* Error handling.
+* Storage permission checks.
+* Useful success feedback.
+
+## 14.11 Feedback Management
+
+Authorized instructors and administrators should be able to review relevant feedback records.
+
+Instructors should primarily manage feedback for their assigned students and groups.
+
+Administrators may need broader visibility for operational support, subject to the academy's permissions and privacy policy.
+
+## 14.12 Academy Branding
+
+Provide controls for:
+
+* Academy name.
+* Academy logo.
+* Primary color.
+* Secondary color.
+* Accent color.
+* Optional welcome message.
+* Contact details.
+
+Preview changes before publishing them.
+
+Validate uploaded images and color values.
+
+Branding configuration must not permit unauthorized access to another academy's settings.
+
+## 14.13 Data Import
+
+The academy may already have student information.
+
+The dashboard should eventually support importing records from CSV files.
+
+A safe import workflow should:
+
+1. Accept a supported file format.
+2. Validate required columns.
+3. Preview the imported data.
+4. Detect duplicates.
+5. Identify invalid records.
+6. Show validation errors.
+7. Require confirmation before writing records.
+8. Generate an import summary.
+
+Do not create duplicate student accounts silently.
+
+Do not import passwords from ordinary CSV files.
+
+Account credentials and invitations must be handled through secure authentication workflows.
+
+---
+
+# PART 15 — NOTIFICATION SYSTEM
+
+## 15.1 Notification Categories
+
+AcademicHub should support relevant notifications for:
+
+* New task assignments.
+* Upcoming task deadlines.
+* Configured daily reminders.
+* Schedule changes.
+* New instructor feedback.
+* Relevant group messages.
+* Important academy announcements.
+
+Not every event needs a push notification.
+
+Use notification preferences and sensible defaults.
+
+## 15.2 Notification Channels
+
+The system may use:
+
+* In-app notifications.
+* Push notifications.
+* Optional email notifications.
+
+Push notifications may use Firebase Cloud Messaging if the application is configured for it.
+
+The backend should determine who receives each notification and whether the event warrants a notification.
+
+## 15.3 Reliability
+
+The notification system should handle:
+
+* Permission denial.
+* Invalid device tokens.
+* Duplicate events.
+* Notification retries where appropriate.
+* User preference changes.
+* Removed or expired devices.
+* Timezone differences.
+
+Do not rely exclusively on a Flutter timer running in the background to deliver daily reminders reliably.
+
+Mobile operating systems may suspend applications, restrict background execution, or delay scheduled work.
+
+Use an appropriate combination of local notifications, backend scheduling, and push notifications according to the use case and platform limitations.
+
+## 15.4 Notification Content
+
+Notifications should be concise and actionable.
+
+Example:
+
+"Your listening practice is due today."
+
+Another example:
+
+"Your instructor has added feedback to your latest assignment."
+
+Do not include sensitive student information in lock-screen notifications unnecessarily.
+
+---
+
+# PART 16 — UI/UX DESIGN SYSTEM
+
+## 16.1 Design Philosophy
+
+AcademicHub should look like a premium, modern educational product.
+
+The design must balance:
+
+* Professionalism.
+* Simplicity.
+* Clarity.
+* Visual consistency.
+* Academic identity.
+* Ease of use.
+* Mobile usability.
+
+Avoid excessive gradients, oversized illustrations, decorative charts without purpose, unnecessary glassmorphism, and crowded layouts.
+
+The interface should communicate that the product is trustworthy and practical.
+
+## 16.2 Primary Color Palette
+
+Use the following initial design tokens:
+
+* Primary Navy: #0F172A
+* Primary Blue: #2563EB
+* Accent Cyan: #06B6D4
+* Main Background: #F8FAFC
+* Card Background: #FFFFFF
+* Success Green: #10B981
+
+These are the starting colors for the default AcademicHub brand.
+
+Academies may customize the appropriate branding tokens without destroying the application's accessibility or consistency.
+
+## 16.3 Color Usage
+
+**Navy (#0F172A)**
+
+Use for:
+
+* Strong headings.
+* Dark surfaces.
+* Important interface elements.
+* Selected navigation elements where appropriate.
+
+**Blue (#2563EB)**
+
+Use for:
+
+* Primary actions.
+* Selected states.
+* Links.
+* Important interactive controls.
+
+**Cyan (#06B6D4)**
+
+Use for:
+
+* Secondary accents.
+* Supporting visual elements.
+* Selected highlights.
+* Appropriate progress visualizations.
+
+**Off-white (#F8FAFC)**
+
+Use as the default light-theme background.
+
+**White (#FFFFFF)**
+
+Use for:
+
+* Cards.
+* Form surfaces.
+* Content containers.
+
+**Green (#10B981)**
+
+Use for:
+
+* Successful completion.
+* Positive status.
+* Confirmed progress.
+
+Do not use green as a universal decorative color when it communicates a specific status.
+
+## 16.4 Typography
+
+Use a clean, readable font appropriate for mobile interfaces.
+
+Typography should include a consistent hierarchy for:
+
+* Screen titles.
+* Section titles.
+* Card titles.
+* Body text.
+* Supporting text.
+* Labels.
+* Buttons.
+* Metadata.
+
+Keep font weights and sizes consistent across screens.
+
+Avoid using too many font sizes or weights.
+
+## 16.5 Spacing and Layout
+
+Use a consistent spacing system.
+
+The interface should have:
+
+* Predictable horizontal padding.
+* Clear spacing between sections.
+* Consistent card padding.
+* Appropriate separation between controls.
+* Comfortable touch targets.
+* Stable alignment.
+
+Avoid placing every element inside a separate card.
+
+Cards should be used when they clarify grouping or hierarchy.
+
+## 16.6 Cards
+
+Cards should use:
+
+* Consistent corner radii.
+* Subtle borders or shadows.
+* Adequate internal spacing.
+* Clear content hierarchy.
+* Restrained visual decoration.
+
+Do not combine heavy shadows, thick borders, bright gradients, and multiple background colors on the same card without a clear reason.
+
+## 16.7 Navigation
+
+Use a clear primary mobile navigation structure.
+
+The main destinations are:
+
+* Home.
+* Plan.
+* Materials.
+* Chat.
+* Feedback.
+
+Profile and settings should be accessible through a clear header action or another consistent navigation location.
+
+The final layout should be ergonomic and coherent across all main screens.
+
+Selected navigation states must be visually clear.
+
+The back button must behave correctly for nested screens and dialogs.
+
+## 16.8 Icons
+
+Use a consistent icon family.
+
+Icons should communicate recognizable actions and concepts.
+
+Do not mix unrelated icon styles throughout the application.
+
+Every icon-only interactive control must have an accessible semantic label.
+
+## 16.9 Light and Dark Themes
+
+Implement a real theme system.
+
+Define semantic tokens for:
+
+* Background.
+* Surface.
+* Primary text.
+* Secondary text.
+* Borders.
+* Dividers.
+* Interactive controls.
+* Success.
+* Warning.
+* Error.
+* Disabled states.
+
+The dark theme should have its own carefully designed surfaces and text hierarchy.
+
+Do not rely on indiscriminate color inversion.
+
+## 16.10 Responsive Design
+
+The mobile application must support the intended mobile screen sizes.
+
+The web dashboard should adapt to different browser widths.
+
+Use responsive layouts where appropriate.
+
+Avoid:
+
+* Overflowing text.
+* Clipped buttons.
+* Unscrollable forms.
+* Overlapping cards.
+* Hardcoded dimensions that break on smaller devices.
+
+## 16.11 Accessibility
+
+Support:
+
+* Readable text.
+* Adequate contrast.
+* Accessible control labels.
+* Predictable navigation.
+* Clear validation errors.
+* Touch-friendly controls.
+* Appropriate screen-reader semantics.
+
+Do not communicate task status using color alone.
+
+Use text, icons, or other appropriate indicators alongside color.
+
+---
+
+# PART 17 — APPLICATION ARCHITECTURE
+
+## 17.1 Primary Technology
+
+Use Flutter for the mobile application.
+
+The initial target platforms are:
+
+* Android.
+* iOS, subject to platform configuration and testing.
+
+The administrative dashboard should be implemented as a separate web interface.
+
+The frontend technology for the dashboard may be selected based on the existing repository, team skills, maintainability, and deployment requirements.
+
+If no existing dashboard technology has been selected, choose one and explain the decision.
+
+Do not force the entire web dashboard into the mobile application's navigation architecture.
+
+## 17.2 Proposed Backend
+
+Firebase is the proposed initial backend.
+
+Potential services include:
+
+* Firebase Authentication.
+* Cloud Firestore.
+* Cloud Storage for Firebase.
+* Firebase Cloud Messaging.
+* Cloud Functions or another trusted backend execution environment.
+* Firebase App Check, where appropriate.
+* Crash reporting and analytics, subject to privacy and configuration requirements.
+
+Use only services needed by the actual requirements.
+
+Before implementation, verify current service configuration requirements, billing implications, platform limitations, and security considerations.
+
+Do not assume that every Firebase service is free under every usage pattern.
+
+## 17.3 State Management
+
+Use a consistent Flutter state-management approach.
+
+If the existing project already uses Provider or BLoC, inspect the implementation before changing it.
+
+Prefer the existing approach when it is working correctly and meets the project's architectural needs.
+
+Do not mix several unrelated state-management patterns without a clear reason.
+
+Separate:
+
+* Presentation state.
+* Business logic.
+* Data access.
+* Authentication state.
+* Authorization decisions.
+
+## 17.4 Suggested Project Organization
+
+Organize the codebase by feature and responsibility.
+
+A possible structure is:
+
+lib/
+app/
+app.dart
+router/
+theme/
+configuration/
+
+core/
+constants/
+errors/
+networking/
+storage/
+services/
+utilities/
+widgets/
+
+features/
+onboarding/
+data/
+domain/
+presentation/
+
+```
+authentication/
+  data/
+  domain/
+  presentation/
+
+home/
+  data/
+  domain/
+  presentation/
+
+plan/
+  data/
+  domain/
+  presentation/
+
+materials/
+  data/
+  domain/
+  presentation/
+
+chat/
+  data/
+  domain/
+  presentation/
+
+feedback/
+  data/
+  domain/
+  presentation/
+
+profile/
+  data/
+  domain/
+  presentation/
+
+notifications/
+  data/
+  domain/
+  presentation/
+```
+
+shared/
+models/
+widgets/
+repositories/
+
+This is a suggested structure, not an instruction to reorganize a functioning project unnecessarily.
+
+Use meaningful names and keep components focused.
+
+Avoid creating dozens of abstractions that do not provide real value.
+
+## 17.5 Repository Pattern
+
+Where appropriate, separate data operations from presentation logic.
+
+For example:
+
+* Authentication repository.
+* Student repository.
+* Course repository.
+* Task repository.
+* Material repository.
+* Chat repository.
+* Feedback repository.
+* Notification repository.
+* Academy configuration repository.
+
+The UI should not directly contain large amounts of database-query logic.
+
+This separation improves testing and maintainability.
+
+## 17.6 Error Handling
+
+Provide consistent error handling for:
+
+* Network failures.
+* Authentication failures.
+* Permission denial.
+* Missing documents.
+* Invalid data.
+* Upload failures.
+* Database write failures.
+* Expired sessions.
+* Unsupported file types.
+
+Users should receive understandable messages.
+
+Do not expose internal stack traces, secrets, or raw backend details in the interface.
+
+Log technical details through an appropriate development or monitoring mechanism.
+
+---
+
+# PART 18 — DATA MODEL AND DATABASE DESIGN
+
+Design the data model before implementing the full set of features.
+
+Use stable identifiers and explicit relationships.
+
+The following is a conceptual model. Adapt it to the actual database and query patterns.
+
+## 18.1 Academy
+
+Fields may include:
+
+* id
+* name
+* logoUrl
+* primaryColor
+* secondaryColor
+* accentColor
+* contactInformation
+* welcomeMessage
+* status
+* createdAt
+* updatedAt
+
+## 18.2 User
+
+Fields may include:
+
+* uid
+* displayName
+* email
+* profileImageUrl
+* globalRole, when applicable
+* accountStatus
+* createdAt
+* updatedAt
+
+Do not assume that a single global role fully represents every user's permissions.
+
+A user may have different authorized roles in different academy contexts.
+
+## 18.3 Academy Membership
+
+Fields may include:
+
+* id
+* academyId
+* userId
+* role
+* membershipStatus
+* studentIdentifier, when applicable
+* joinedAt
+* createdAt
+* updatedAt
+
+Use this relationship to represent academy-specific membership and permissions.
+
+## 18.4 Course
+
+Fields may include:
+
+* id
+* academyId
+* title
+* description
+* category
+* status
+* createdAt
+* updatedAt
+
+## 18.5 Group
+
+Fields may include:
+
+* id
+* academyId
+* courseId, when applicable
+* name
+* description
+* status
+* createdAt
+* updatedAt
+
+## 18.6 Group Membership
+
+Fields may include:
+
+* id
+* academyId
+* groupId
+* userId
+* membershipRole
+* status
+* joinedAt
+
+This relationship supports multiple group assignments when required.
+
+## 18.7 Group Instructor Assignment
+
+Represent instructor assignments explicitly if the system allows multiple instructors per group or an instructor to serve several groups.
+
+The data model must make it possible to determine which instructor is authorized to manage each group.
+
+## 18.8 Schedule Event
+
+Fields may include:
+
+* id
+* academyId
+* groupId
+* instructorId
+* title
+* description
+* startAt
+* endAt
+* timezone
+* status
+* createdAt
+* updatedAt
+
+Recurring schedules may require a separate recurrence model.
+
+Do not generate recurring events indefinitely without considering storage, query efficiency, and schedule changes.
+
+## 18.9 Task
+
+Fields may include:
+
+* id
+* academyId
+* courseId
+* groupId
+* title
+* description
+* category
+* assignedAt
+* dueAt
+* estimatedDuration
+* taskType
+* externalUrl
+* resourceReferences
+* createdBy
+* status
+* createdAt
+* updatedAt
+
+Some fields may be optional depending on the task type.
+
+## 18.10 Student Task Record
+
+Represent each student's interaction with an assigned task separately.
+
+Fields may include:
+
+* id
+* academyId
+* taskId
+* studentId
+* status
+* completedAt
+* submittedAt
+* reviewedAt
+* instructorId
+* reviewStatus
+* createdAt
+* updatedAt
+
+If multiple submissions are supported, use a separate submission collection instead of overwriting the previous submission.
+
+This structure prevents one student's completion state from affecting the rest of the group.
+
+## 18.11 Material
+
+Fields may include:
+
+* id
+* academyId
+* courseId
+* groupId
+* title
+* description
+* resourceType
+* storagePath
+* externalUrl
+* fileSize
+* uploadedBy
+* visibility
+* createdAt
+* updatedAt
+
+Use the relevant access-controlled storage mechanism for actual file contents.
+
+## 18.12 Conversation
+
+Fields may include:
+
+* id
+* academyId
+* conversationType
+* groupId, when applicable
+* title
+* createdBy
+* createdAt
+* updatedAt
+
+## 18.13 Conversation Membership
+
+Fields may include:
+
+* id
+* academyId
+* conversationId
+* userId
+* role
+* joinedAt
+* membershipStatus
+
+## 18.14 Message
+
+Fields may include:
+
+* id
+* academyId
+* conversationId
+* senderId
+* messageType
+* text
+* attachmentReference
+* createdAt
+* editedAt
+* status
+
+The authenticated sender identity must be verified.
+
+Do not trust client-provided sender identifiers.
+
+## 18.15 Feedback
+
+Fields may include:
+
+* id
+* academyId
+* studentId
+* instructorId
+* taskId, when applicable
+* submissionId, when applicable
+* writtenFeedback
+* voiceResourceReference
+* reviewStatus
+* createdAt
+* updatedAt
+
+## 18.16 Notification
+
+Fields may include:
+
+* id
+* academyId
+* recipientId
+* type
+* title
+* body
+* relatedResourceType
+* relatedResourceId
+* createdAt
+* readAt
+* deliveryStatus, where relevant
+
+## 18.17 Academy Invitation
+
+Fields may include:
+
+* id
+* academyId
+* intendedRole
+* studentIdentifier, when applicable
+* invitationCodeHash or another secure token representation
+* expirationAt
+* usageLimit, where relevant
+* usedCount
+* createdBy
+* status
+* createdAt
+
+Invitation secrets must not be exposed unnecessarily.
+
+## 18.18 Important Database Rules
+
+* Use stable identifiers.
+* Avoid duplicate sources of truth.
+* Validate relationships.
+* Define indexes based on actual queries.
+* Consider pagination.
+* Track relevant creation and update timestamps.
+* Define deletion and archival behavior.
+* Preserve historical feedback where required.
+* Prevent unauthorized cross-academy access.
+* Avoid unbounded document growth.
+* Avoid storing large file contents in ordinary database documents.
+* Do not store secrets in client-readable documents.
+
+Before finalizing the schema, document the most important read and write operations and verify that the chosen structure supports them efficiently.
+
+---
+
+# PART 19 — SECURITY AND AUTHORIZATION
+
+Security must be implemented as part of the system architecture rather than added at the end.
+
+## 19.1 Authentication Is Not Authorization
+
+Being logged in does not mean that a user is authorized to access every resource.
+
+Every sensitive operation must verify the user's permissions.
+
+## 19.2 Role-Based Access
+
+Implement appropriate authorization for:
+
+* Students.
+* Instructors.
+* Academy administrators.
+* Future platform administrators.
+
+Permissions should also consider academy membership and resource ownership.
+
+## 19.3 Tenant Isolation
+
+Every academy-specific operation must enforce the correct academy context.
+
+A malicious user must not be able to change an academy ID or document ID and access another academy's data.
+
+## 19.4 Database Security Rules
+
+If Firestore is used:
+
+* Require authentication where appropriate.
+* Validate academy membership.
+* Validate resource ownership.
+* Restrict updates to permitted fields.
+* Restrict role changes.
+* Prevent unauthorized message creation.
+* Prevent unauthorized task completion changes.
+* Restrict administrative operations.
+* Test cross-tenant access attempts.
+
+Do not rely on Flutter widgets to protect data.
+
+## 19.5 Trusted Backend Operations
+
+Use trusted backend execution for operations that require privileged access.
+
+Examples may include:
+
+* Creating privileged accounts.
+* Managing invitation redemption.
+* Sending targeted notifications.
+* Importing large batches of records.
+* Performing administrative operations.
+* Enforcing sensitive role changes.
+
+Never embed service-account credentials or private server secrets in the Flutter application or public web bundle.
+
+## 19.6 File Security
+
+Validate uploads and control who can access each resource.
+
+Avoid unrestricted public access to private student feedback or private educational materials.
+
+Do not assume that hiding a download button protects the underlying file.
+
+## 19.7 Privacy
+
+Collect only the data needed for the product's operation.
+
+Provide appropriate privacy information.
+
+Define how user data is retained, exported, and deleted.
+
+Avoid exposing student performance information to unauthorized group members.
+
+---
+
+# PART 20 — USER FLOWS
+
+Implement and test the following core journeys.
+
+## Flow A: New Student Registration
+
+1. Open AcademicHub.
+2. View onboarding screens.
+3. Navigate to account creation.
+4. Enter name, email, password, and academy invitation code.
+5. Validate input.
+6. Submit registration.
+7. Authenticate the user.
+8. Validate academy eligibility.
+9. Create or link academy membership.
+10. Load the student's academy configuration.
+11. Load assigned courses and groups.
+12. Open the Student Dashboard.
+
+If approval is required, show a pending-access screen.
+
+## Flow B: Returning Student Login
+
+1. Open the application.
+2. Restore the authentication session when valid.
+3. Otherwise, show Sign In.
+4. Authenticate the student.
+5. Resolve academy membership.
+6. Load authorized application configuration.
+7. Open Home.
+
+Handle expired sessions and revoked memberships correctly.
+
+## Flow C: Student Completes a Daily Task
+
+1. Open Home.
+2. Navigate to Plan.
+3. Select a date.
+4. Open a pending task.
+5. Read instructions.
+6. Open the external resource if applicable.
+7. Complete the task.
+8. Return to AcademicHub.
+9. Mark the task complete when permitted.
+10. Save the completion record.
+11. Refresh progress indicators.
+12. Display a success confirmation.
+
+## Flow D: Student Opens Educational Materials
+
+1. Open Materials.
+2. Browse categories or search.
+3. Select a resource.
+4. Verify access permissions.
+5. Preview, download, or open the resource.
+6. Handle errors gracefully.
+
+## Flow E: Student Participates in a Group Discussion
+
+1. Open Chat.
+2. Select an authorized conversation.
+3. Load recent messages.
+4. Send a message.
+5. Save the message through the backend.
+6. Display the confirmed message.
+7. Deliver the message to authorized conversation members.
+8. Update unread indicators and notifications as appropriate.
+
+## Flow F: Instructor Reviews Student Work
+
+1. Sign in as an instructor.
+2. Open an assigned group.
+3. Select a student.
+4. Open an assigned task or submission.
+5. Review the relevant work.
+6. Add written feedback.
+7. Optionally attach voice feedback.
+8. Save the review.
+9. Update the review status.
+10. Notify the student when appropriate.
+11. Make the feedback visible in the student's Feedback section.
+
+## Flow G: Administrator Creates a Task
+
+1. Sign in to the web dashboard.
+2. Open Task Management.
+3. Create a task.
+4. Enter the title and instructions.
+5. Select a course, group, or individual student.
+6. Configure the due date.
+7. Add a resource or external URL when applicable.
+8. Preview the task.
+9. Publish the task.
+10. Create the appropriate student task records or assignment relationships.
+11. Trigger notifications when appropriate.
+12. Verify that the task appears in the intended students' Plan screens.
+
+## Flow H: Administrator Changes Academy Branding
+
+1. Open Academy Branding.
+2. Update the academy name or logo.
+3. Select appropriate colors.
+4. Preview the configuration.
+5. Save the changes.
+6. Validate the saved configuration.
+7. Make the updated branding available to authorized academy members.
+8. Refresh relevant mobile application configuration.
+
+---
+
+# PART 21 — MVP SCOPE AND PRIORITIES
+
+The first version should deliver a coherent, demonstrable product rather than a large number of incomplete features.
+
+## Phase 1: Foundation
+
+Implement:
+
+* Flutter project structure.
+* Design system.
+* Light and dark themes.
+* Navigation.
+* Onboarding.
+* Authentication.
+* Academy membership.
+* Role-aware application entry.
+* Dynamic academy configuration.
+
+## Phase 2: Core Student Experience
+
+Implement:
+
+* Student Dashboard.
+* Calendar and tasks.
+* Task completion records.
+* Materials library.
+* Profile and settings.
+* Basic progress calculations.
+
+## Phase 3: Instructor Workflows
+
+Implement:
+
+* Instructor group access.
+* Student lists.
+* Task review.
+* Written feedback.
+* Voice feedback.
+* Relevant progress views.
+
+## Phase 4: Communication
+
+Implement:
+
+* Real-time group chat.
+* Conversation membership.
+* Message history.
+* Unread indicators.
+* Appropriate notifications.
+
+## Phase 5: Administrative Dashboard
+
+Implement:
+
+* Academy configuration.
+* Student management.
+* Instructor management.
+* Course and group management.
+* Schedule management.
+* Task management.
+* Materials management.
+* Invitation management.
+
+The dashboard must connect to the real backend.
+
+## Phase 6: Reliability and Deployment
+
+Implement and verify:
+
+* Security rules.
+* Permission tests.
+* Error handling.
+* Performance improvements.
+* Notification reliability.
+* Responsive dashboard behavior.
+* Logging and crash reporting where appropriate.
+* Deployment configuration.
+* Documentation.
+
+## MVP Prioritization Rule
+
+If time or resources are limited, prioritize complete end-to-end workflows.
+
+A smaller feature that works reliably is preferable to several visually impressive but nonfunctional features.
+
+Do not implement advanced AI pronunciation evaluation, subscription billing, or complex analytics before the essential learning workflows are reliable.
+
+---
+
+# PART 22 — TESTING AND QUALITY ASSURANCE
+
+Create a practical testing strategy covering unit, integration, security, and UI behavior.
+
+## 22.1 Authentication Tests
+
+Test:
+
+* Successful registration.
+* Invalid email.
+* Incorrect credentials.
+* Weak passwords.
+* Password reset.
+* Expired sessions.
+* Revoked access.
+* Invalid academy invitations.
+* Unauthorized role assignment.
+
+## 22.2 Student Tests
+
+Test:
+
+* Correct task visibility.
+* Correct task completion.
+* Accurate progress calculations.
+* Material access permissions.
+* Correct feedback visibility.
+* Profile settings persistence.
+* Theme persistence.
+* Notification preferences.
+
+## 22.3 Instructor Tests
+
+Test:
+
+* Assigned-group access.
+* Unauthorized-group denial.
+* Correct feedback creation.
+* Correct student association.
+* Voice-resource access.
+* Restricted administrative operations.
+
+## 22.4 Dashboard Tests
+
+Test:
+
+* Creating and editing students.
+* Assigning instructors.
+* Creating groups.
+* Creating tasks.
+* Publishing materials.
+* Changing academy branding.
+* Invalid form submissions.
+* Duplicate imports.
+* Unauthorized administrative operations.
+
+## 22.5 Security Tests
+
+Test explicitly that:
+
+* A student cannot access another student's private feedback.
+* A student cannot change their role to administrator.
+* An instructor cannot modify academy-wide settings without permission.
+* A user cannot read another academy's private records.
+* A non-member cannot access a private group chat.
+* Unauthorized users cannot access private file resources.
+* Client-provided identifiers cannot bypass authorization.
+
+## 22.6 UI Tests
+
+Test:
+
+* Small screens.
+* Large screens.
+* Light mode.
+* Dark mode.
+* Empty states.
+* Loading states.
+* Long text.
+* Network failures.
+* Keyboard behavior.
+* Navigation and back actions.
+* RTL behavior if Arabic is introduced.
+* Accessibility labels.
+
+Do not treat the absence of visible errors as proof that the entire system is secure.
+
+---
+
+# PART 23 — BUSINESS MODEL AND FUTURE EXPANSION
+
+AcademicHub should initially focus on delivering clear value to English language academies.
+
+The platform's business model may eventually include:
+
+* Monthly academy subscriptions.
+* Annual academy subscriptions.
+* Tiered plans based on the number of students.
+* Additional administrative capabilities.
+* Optional branded deployments.
+* Additional integrations.
+* Premium reporting features.
+
+These are possible future business models, not confirmed commercial requirements.
+
+Do not implement payment processing in the MVP unless explicitly requested.
+
+Before launching commercially, evaluate:
+
+* Hosting and database costs.
+* Storage usage.
+* Notification volume.
+* Authentication requirements.
+* Support workload.
+* Security and privacy obligations.
+* Expected number of academies and students.
+* Maintenance requirements.
+
+The system should support growth without making the initial implementation unnecessarily complicated.
+
+---
+
+# PART 24 — FUTURE FEATURES
+
+Design the architecture so that future capabilities can be introduced without rebuilding the entire product.
+
+Possible future extensions include:
+
+## 24.1 AI-Assisted Language Learning
+
+Potential capabilities:
+
+* Pronunciation practice.
+* Speech recognition.
+* Guided speaking exercises.
+* Listening comprehension.
+* Vocabulary recommendations.
+* Personalized practice suggestions.
+
+These features require separate evaluation of model quality, supported languages, costs, privacy, latency, and accuracy.
+
+Do not claim that AI can accurately grade pronunciation merely because speech-to-text is available.
+
+## 24.2 Advanced Analytics
+
+Potential capabilities:
+
+* Student activity trends.
+* Group-level completion summaries.
+* Instructor workload summaries.
+* Engagement reports.
+* Task completion trends.
+
+Analytics should support useful educational decisions and avoid misleading metrics.
+
+## 24.3 Additional Learning Formats
+
+Possible future support:
+
+* Interactive quizzes.
+* Structured assignment submissions.
+* More advanced audio exercises.
+* Course-specific learning paths.
+* Additional educational content formats.
+
+## 24.4 Commercial Multi-Tenant Operations
+
+Potential capabilities:
+
+* Academy subscription management.
+* Usage limits.
+* Automated onboarding.
+* Academy-level billing.
+* Platform owner dashboard.
+
+Keep these separate from the essential student-learning MVP.
+
+---
+
+# PART 25 — ACCEPTANCE CRITERIA
+
+AcademicHub should not be considered complete merely because its screens have been designed.
+
+The following criteria define a successful initial product.
+
+## Student Experience
+
+* A student can authenticate successfully.
+* The correct academy identity is displayed.
+* The correct courses and groups are loaded.
+* The student can view assigned tasks.
+* The student can complete eligible tasks.
+* Progress reflects real task records.
+* Educational materials are accessible according to permissions.
+* The student can participate in authorized group discussions.
+* The student can view instructor feedback.
+* Voice feedback works when implemented.
+* Profile and theme preferences persist.
+* Notifications follow the configured rules.
+
+## Instructor Experience
+
+* An instructor can access assigned groups.
+* The instructor can view authorized students.
+* The instructor can review supported student work.
+* The instructor can create written feedback.
+* Voice feedback works when implemented.
+* Unauthorized operations are rejected.
+
+## Administrator Experience
+
+* An administrator can manage academy records.
+* The administrator can create courses and groups.
+* The administrator can assign students and instructors.
+* The administrator can publish tasks.
+* The administrator can manage educational materials.
+* The administrator can change academy branding.
+* Changes appear in the correct mobile application context.
+* Administrative permissions are enforced by the backend.
+
+## Platform Experience
+
+* Academy data is isolated.
+* Database access is protected.
+* File access is controlled.
+* The UI handles errors.
+* Loading and empty states are implemented.
+* The application has a consistent design system.
+* Core workflows are tested.
+* The project has usable technical documentation.
+
+---
+
+# PART 26 — DEVELOPMENT WORKING RULES
+
+Follow these rules throughout implementation.
+
+## Rule 1: Understand Before Changing
+
+Inspect the existing project, dependencies, architecture, and designs before making significant changes.
+
+## Rule 2: Preserve Working Functionality
+
+Do not rewrite working components without a clear reason.
+
+## Rule 3: Build Connected Features
+
+A task card, chat screen, or feedback panel must connect to the relevant application logic and data.
+
+## Rule 4: Avoid Fake Functionality
+
+Do not use hardcoded success messages when the backend operation failed.
+
+Do not simulate real-time chat with static messages.
+
+Do not invent student statistics.
+
+Do not create fake upload progress that does not correspond to an actual upload.
+
+## Rule 5: Maintain Consistency
+
+Use shared design tokens, reusable components, consistent naming, and clear navigation.
+
+## Rule 6: Protect Existing Data
+
+Database changes must account for existing records and relationships.
+
+Do not delete existing data merely to make a new schema easier to implement.
+
+## Rule 7: Explain Important Decisions
+
+When choosing a database structure, authentication mechanism, state-management approach, or backend workflow, explain the reasoning briefly.
+
+## Rule 8: Do Not Overengineer
+
+Choose the simplest architecture that satisfies the real requirements.
+
+## Rule 9: Test Incrementally
+
+Test each meaningful workflow before moving to the next phase.
+
+## Rule 10: Be Transparent
+
+Clearly distinguish:
+
+* Implemented functionality.
+* Partially implemented functionality.
+* Planned functionality.
+* External configuration still required.
+* Known limitations.
+
+---
+
+# PART 27 — REQUIRED INITIAL RESPONSE FROM THE AI
+
+Before implementing major features, analyze the available project and produce the following deliverables in order:
+
+1. **Product Understanding:** Summarize the AcademicHub concept and its value proposition.
+
+2. **Requirements Matrix:** Classify requirements into MVP, important follow-up features, and future extensions.
+
+3. **Architecture Proposal:** Explain the mobile application, web dashboard, backend, authentication, storage, and notification architecture.
+
+4. **Screen Inventory:** List all primary and necessary secondary screens, with their purposes and navigation relationships.
+
+5. **Role and Permission Matrix:** Specify what students, instructors, academy administrators, and future platform administrators may access or modify.
+
+6. **Data Model:** Propose the database collections or tables, relationships, indexes, and key security constraints.
+
+7. **User Flow Diagrams:** Describe the major end-to-end workflows.
+
+8. **Design System:** Define colors, typography, spacing, components, light mode, and dark mode.
+
+9. **Implementation Roadmap:** Break development into small, testable phases.
+
+10. **Risk Assessment:** Identify technical risks, external dependencies, security issues, and potentially expensive features.
+
+11. **Acceptance Tests:** Define how the main features will be verified.
+
+12. **First Implementation Step:** Identify the most appropriate starting point based on the actual repository and available resources.
+
+Do not generate the entire application in one enormous, unstructured code response.
+
+Implement it incrementally.
+
+After each phase:
+
+* Summarize what changed.
+* Identify the files created or modified.
+* Explain how to run or test the work.
+* Report any unresolved issues.
+* Confirm which acceptance criteria have been satisfied.
+
+If you have access to the source repository, inspect it and work with its actual structure.
+
+If you have access to the Figma file, inspect the existing designs and preserve the established screen architecture.
+
+If you do not have access to a required repository, Figma file, Firebase project, or external service, state that limitation and request the necessary access or information.
+
+Never pretend to have accessed an unavailable resource.
+
+---
+
+# FINAL PRODUCT DEFINITION
+
+AcademicHub is a customizable, multi-academy learning platform that connects students, instructors, and academy administrators through a unified digital experience.
+
+Its core value lies in bringing together:
+
+* Learning plans and task management.
+* Educational materials.
+* Group communication.
+* Instructor feedback.
+* Student progress tracking.
+* Academy administration.
+* Dynamic academy branding.
+
+The mobile application provides students with a clear and organized learning experience.
+
+The instructor workflows support task review, feedback, and group management.
+
+The web dashboard allows authorized academy personnel to manage the learning environment without modifying the application's source code.
+
+The backend ensures that the information shown to each user is accurate, authorized, and associated with the correct academy.
+
+The long-term objective is to create a reusable software product that can be configured for different language academies while maintaining a consistent, secure, and professional technical foundation.
+
+**Build AcademicHub as a coherent product with working workflows, not merely as a visually attractive collection of screens.**

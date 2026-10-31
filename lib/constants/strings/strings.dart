@@ -2,6 +2,7 @@ const splashScreen = "/";
 const String authScreen = '/authScreen';
 const String mainScreen = '/mainScreen';
 const String homeScreen = '/home';
+const String loginWidget = '/welcomeScreen';
 const String welcomeScreen = '/welcomeScreen';
 const String coursesScreen = '/courses';
 const String chatScreen = '/chat';

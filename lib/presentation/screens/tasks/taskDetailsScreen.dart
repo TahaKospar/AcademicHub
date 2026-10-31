@@ -10,6 +10,6 @@ class Taskdetailsscreen extends StatefulWidget {
 class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(appBar: AppBar(), body: Container());
   }
 }

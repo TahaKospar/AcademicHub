@@ -16,7 +16,7 @@ class AuthRepository {
     );
   }
 
-  Future<void> register({
+  Future<UserCredential> register({
     required String name,
     required String academicCode,
     required String password,
@@ -39,9 +39,38 @@ class AuthRepository {
             'uid': userCredential.user!.uid,
             'createdAt': DateTime.now(),
           });
-    } catch (firestoreError) {
+      await addUserLevelData(uid: userCredential.user!.uid, level: "Level4");
+    } catch (error) {
       await userCredential.user?.delete();
-      throw Exception("Failed to Create Account ");
+      throw Exception("Failed to create account data: $error");
     }
+    return userCredential;
+  }
+}
+
+Future<void> addUserLevelData({
+  required String uid,
+  required String level,
+}) async {
+  final firestore = FirebaseFirestore.instance;
+  final daysSnapshot = await firestore
+      .collection('Levelid')
+      .doc(level)
+      .collection('Days')
+      .get();
+
+  final userTasksDocument = firestore.collection('tasks').doc(uid);
+  await userTasksDocument.set({
+    'uid': uid,
+    'level': level,
+    'createdAt': FieldValue.serverTimestamp(),
+  });
+
+  for (final day in daysSnapshot.docs) {
+    await userTasksDocument.collection('UserTasks').doc(day.id).set({
+      ...day.data(),
+      'dayId': day.id,
+      'status': 'Pending',
+    });
   }
 }

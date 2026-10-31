@@ -1,21 +1,23 @@
-import 'package:academichub/business_logic/tasks/cubit/tasks_cubit.dart';
 import 'package:academichub/firebase_options.dart';
-import 'package:academichub/presentation/screens/auth/authScreen.dart';
-import 'package:academichub/presentation/screens/home/mainScreen.dart';
-import 'package:academichub/presentation/widgets/app_shell.dart';
+import 'package:academichub/business_logic/tasks/cubit/tasks_cubit.dart';
+import 'package:academichub/data/repository/task_repository.dart';
+import 'package:academichub/data/services/task_services.dart';
+import 'package:academichub/presentation/screens/auth/auth_screen.dart';
+import 'package:academichub/presentation/screens/home/main_screen.dart';
+import 'package:academichub/presentation/widgets/app_router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:academichub/constants/strings/strings.dart';
-import 'package:academichub/presentation/screens/auth/splashScreen.dart';
-import 'package:academichub/presentation/screens/auth/welcomeScreen.dart';
+import 'package:academichub/presentation/screens/auth/splash_screen.dart';
+import 'package:academichub/presentation/screens/auth/welcome_screen.dart';
 import 'package:academichub/presentation/screens/chat/chatScreen.dart';
 import 'package:academichub/presentation/screens/courses/coursesScreen.dart';
-import 'package:academichub/presentation/screens/home/homeScreen.dart';
+import 'package:academichub/presentation/screens/home/home_screen.dart';
 import 'package:academichub/presentation/screens/home/notificationsScreen.dart';
 import 'package:academichub/presentation/screens/profile/accountSettingsScreen.dart';
 import 'package:academichub/presentation/screens/profile/helpScreen.dart';
 import 'package:academichub/presentation/screens/profile/profileScreen.dart';
 import 'package:academichub/presentation/screens/tasks/taskDetailsScreen.dart';
-import 'package:academichub/presentation/screens/tasks/tasksScreen.dart';
+import 'package:academichub/presentation/screens/tasks/tasks_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -35,8 +37,8 @@ class AcademicHub extends StatefulWidget {
 class _AcademicHubState extends State<AcademicHub> {
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [BlocProvider<TasksCubit>(create: (context) => TasksCubit())],
+    return BlocProvider(
+      create: (_) => TasksCubit(TaskRepository(TaskServices())),
       child: MaterialApp(
         themeMode: ThemeMode.light,
         title: 'AcademicHub',
@@ -52,6 +54,7 @@ class _AcademicHubState extends State<AcademicHub> {
           scaffoldBackgroundColor: Colors.black,
         ),
         initialRoute: splashScreen,
+        onGenerateRoute: generateRoute,
         routes: {
           splashScreen: (_) => const Splashscreen(),
           authScreen: (_) => const Authscreen(),

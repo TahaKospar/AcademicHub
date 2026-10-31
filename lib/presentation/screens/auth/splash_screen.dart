@@ -40,7 +40,7 @@ class _SplashscreenState extends State<Splashscreen> {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Container(
+      body: SizedBox(
         width: screenSize.width,
         height: screenSize.height,
         child: Center(
