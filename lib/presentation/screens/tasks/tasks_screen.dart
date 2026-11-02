@@ -1,6 +1,9 @@
+import 'package:academichub/business_logic/tasks/cubit/task_details_cubit.dart';
 import 'package:academichub/business_logic/tasks/cubit/tasks_cubit.dart';
+import 'package:academichub/constants/strings/strings.dart';
 import 'package:academichub/data/model/task_model.dart';
-import 'package:academichub/presentation/screens/tasks/taskDetailsScreen.dart';
+import 'package:academichub/data/repository/task_details_repository.dart';
+import 'package:academichub/presentation/screens/tasks/task_details_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -346,7 +349,11 @@ class _TasksscreenState extends State<Tasksscreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Taskdetailsscreen(),
+                              builder: (context) => BlocProvider(
+                                create: (context) =>
+                                    TaskDetailsCubit(TaskDetailsRepository()),
+                                child: Taskdetailsscreen(dayId: task.dayId),
+                              ),
                             ),
                           );
                         },

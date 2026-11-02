@@ -70,7 +70,7 @@ Future<void> addUserLevelData({
     await userTasksDocument.collection('UserTasks').doc(day.id).set({
       ...day.data(),
       'dayId': day.id,
-      'status': 'Pending',
+      'status': 'To Do',
     });
   }
 }

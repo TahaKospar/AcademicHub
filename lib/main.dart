@@ -16,7 +16,7 @@ import 'package:academichub/presentation/screens/home/notificationsScreen.dart';
 import 'package:academichub/presentation/screens/profile/accountSettingsScreen.dart';
 import 'package:academichub/presentation/screens/profile/helpScreen.dart';
 import 'package:academichub/presentation/screens/profile/profileScreen.dart';
-import 'package:academichub/presentation/screens/tasks/taskDetailsScreen.dart';
+import 'package:academichub/presentation/screens/tasks/task_details_screen.dart';
 import 'package:academichub/presentation/screens/tasks/tasks_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -66,7 +66,6 @@ class _AcademicHubState extends State<AcademicHub> {
           tasksScreen: (_) => const Tasksscreen(),
           profileScreen: (_) => const Profilescreen(),
           notificationsScreen: (_) => const Notificationsscreen(),
-          taskDetailsScreen: (_) => const Taskdetailsscreen(),
           accountSettingsScreen: (_) => const Accountsettingsscreen(),
           helpScreen: (_) => const Helpscreen(),
         },

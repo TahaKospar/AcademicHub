@@ -4,15 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class TaskServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<List<TaskModel>> fetchUserTasks({
-    required String uid,
-  }) async {
-
-    // Get user's document
-    final userDoc = await _firestore
-        .collection("tasks")
-        .doc(uid)
-        .get();
+  Future<List<TaskModel>> fetchUserTasks({required String uid}) async {
+    final userDoc = await _firestore.collection("tasks").doc(uid).get();
 
     final userData = userDoc.data();
 
@@ -20,7 +13,6 @@ class TaskServices {
       throw Exception("User createdAt not found");
     }
 
-    // Read createdAt
     final createdAtValue = userData['createdAt'];
 
     DateTime createdAt;
@@ -33,14 +25,8 @@ class TaskServices {
       throw Exception("Invalid createdAt format");
     }
 
-    // Normalize registration date
-    final startDate = DateTime(
-      createdAt.year,
-      createdAt.month,
-      createdAt.day,
-    );
+    final startDate = DateTime(createdAt.year, createdAt.month, createdAt.day);
 
-    // Get tasks
     final snapshot = await _firestore
         .collection("tasks")
         .doc(uid)
@@ -48,24 +34,15 @@ class TaskServices {
         .get();
 
     return snapshot.docs.map((doc) {
-
       final data = doc.data();
 
-      // Extract day number from dayId
-      final dayNumber = int.tryParse(
-        doc.id.replaceAll('day', ''),
-      );
+      final dayNumber = int.tryParse(doc.id.replaceAll('day', ''));
 
       if (dayNumber == null || dayNumber < 1) {
-        throw FormatException(
-          'Invalid task day ID: ${doc.id}',
-        );
+        throw FormatException('Invalid task day ID: ${doc.id}');
       }
 
-      // Calculate task date
-      final scheduledDate = startDate.add(
-        Duration(days: dayNumber - 1),
-      );
+      final scheduledDate = calculateStudyDate(startDate, dayNumber);
 
       return TaskModel(
         audioUrl: _optionalString(data, "audioUrl", doc.id),
@@ -107,5 +84,31 @@ class TaskServices {
     throw FormatException(
       'Field "$field" must be a string when present in task "$documentId".',
     );
+  }
+
+  DateTime calculateStudyDate(DateTime startDate, int dayNumber) {
+    DateTime currentDate = DateTime(
+      startDate.year,
+      startDate.month,
+      startDate.day,
+    );
+
+    int currentDay = 1;
+
+    while (currentDate.weekday == DateTime.friday) {
+      currentDate = currentDate.add(const Duration(days: 1));
+    }
+
+    while (currentDay < dayNumber) {
+      currentDate = currentDate.add(const Duration(days: 1));
+
+      if (currentDate.weekday == DateTime.friday) {
+        continue;
+      }
+
+      currentDay++;
+    }
+
+    return currentDate;
   }
 }
