@@ -1,6 +1,6 @@
 import 'package:academichub/business_logic/auth/cubit/auth_cubit.dart';
-import 'package:academichub/data/repository/auth_repository.dart';
-import 'package:academichub/data/services/authService.dart';
+import 'package:academichub/data/repository/auth/auth_repository.dart';
+import 'package:academichub/data/services/auth/authService.dart';
 import 'package:academichub/presentation/widgets/login_widget.dart';
 import 'package:academichub/presentation/widgets/register_widget.dart';
 import 'package:flutter/material.dart';

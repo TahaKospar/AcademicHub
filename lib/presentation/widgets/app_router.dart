@@ -1,12 +1,14 @@
 import 'package:academichub/business_logic/auth/cubit/auth_cubit.dart';
+import 'package:academichub/business_logic/home/home_page_cubit.dart';
 import 'package:academichub/business_logic/tasks/cubit/task_details_cubit.dart';
 import 'package:academichub/business_logic/tasks/cubit/tasks_cubit.dart';
 import 'package:academichub/constants/strings/strings.dart';
-import 'package:academichub/data/repository/auth_repository.dart';
-import 'package:academichub/data/repository/task_details_repository.dart';
-import 'package:academichub/data/repository/task_repository.dart';
-import 'package:academichub/data/services/authService.dart';
-import 'package:academichub/data/services/task_services.dart';
+import 'package:academichub/data/repository/auth/auth_repository.dart';
+import 'package:academichub/data/repository/home/home_page_repository.dart';
+import 'package:academichub/data/repository/tasks/task_details_repository.dart';
+import 'package:academichub/data/repository/tasks/task_repository.dart';
+import 'package:academichub/data/services/auth/authService.dart';
+import 'package:academichub/data/services/tasks/task_services.dart';
 import 'package:academichub/presentation/screens/auth/auth_screen.dart';
 import 'package:academichub/presentation/screens/auth/splash_screen.dart';
 import 'package:academichub/presentation/screens/auth/welcome_screen.dart';
@@ -58,7 +60,13 @@ Route? generateRoute(RouteSettings settings) {
     case loginWidget:
       return MaterialPageRoute(builder: (context) => LoginWidget());
     case homeScreen:
-      return MaterialPageRoute(builder: (context) => Homescreen());
+      return MaterialPageRoute(
+        builder: (context) => BlocProvider(
+          create: (context) => HomePageCubit(HomePageRepository()),
+          child: Homescreen(),
+        ),
+      );
+      
     case welcomeScreen:
       return MaterialPageRoute(builder: (context) => Welcomescreen());
     case coursesScreen:

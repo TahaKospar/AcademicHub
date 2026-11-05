@@ -1,6 +1,6 @@
-part of 'task_details_cubit.dart';
+import 'package:academichub/data/model/tassk/task_details_model.dart';
 
-@immutable
+
 sealed class TaskDetailsState {}
 
 final class TaskDetailsInitial extends TaskDetailsState {}

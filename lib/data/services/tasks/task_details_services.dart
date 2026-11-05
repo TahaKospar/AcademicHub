@@ -1,4 +1,4 @@
-import 'package:academichub/data/model/task_details_model.dart';
+import 'package:academichub/data/model/tassk/task_details_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TaskDetailsServices {
@@ -24,7 +24,7 @@ class TaskDetailsServices {
   }
 
   Future<void> getTaskType({required String dayId, required String uid}) async {
-    final taskType = FirebaseFirestore.instance
+    FirebaseFirestore.instance
         .collection("tasks")
         .doc(uid)
         .collection("UserTasks")

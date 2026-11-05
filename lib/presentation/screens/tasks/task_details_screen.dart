@@ -1,8 +1,14 @@
+import 'dart:io';
 import 'package:academichub/business_logic/tasks/cubit/task_details_cubit.dart';
+import 'package:academichub/business_logic/tasks/cubit/task_details_state.dart';
+import 'package:academichub/presentation/widgets/voice_paly.dart';
+import 'package:academichub/presentation/widgets/voice_recorder_widget.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Taskdetailsscreen extends StatefulWidget {
   final String dayId;
@@ -13,14 +19,15 @@ class Taskdetailsscreen extends StatefulWidget {
 }
 
 class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
-  late AudioPlayer _audioPlayer;
-  bool isPlaying = false;
-  Duration duration = Duration.zero;
-  Duration position = Duration.zero;
-  double playbackRate = 1.0;
-
   TextEditingController answer = TextEditingController();
+  TextEditingController note = TextEditingController();
   GlobalKey<FormState> formState = GlobalKey();
+
+  String? recordedFilePath;
+  bool isAudioPlayingLocally = false;
+  bool isSubmitting = false; // متغير للتحكم في اللودينج وقت الإرسال
+  late AudioPlayer _localAudioPlayer;
+  bool _isInitializedFromData = false;
 
   @override
   void initState() {
@@ -32,43 +39,196 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
         dayId: widget.dayId,
       );
     }
-
-    _audioPlayer = AudioPlayer();
-
-    _audioPlayer.onPlayerStateChanged.listen((state) {
-      if (mounted) {
-        setState(() {
-          isPlaying = state == PlayerState.playing;
-        });
-      }
-    });
-
-    _audioPlayer.onDurationChanged.listen((newDuration) {
-      if (mounted) {
-        setState(() {
-          duration = newDuration;
-        });
-      }
-    });
-
-    _audioPlayer.onPositionChanged.listen((newPosition) {
-      setState(() {
-        position = newPosition;
-      });
-    });
+    _localAudioPlayer = AudioPlayer();
   }
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    _localAudioPlayer.dispose();
+    answer.dispose();
+    note.dispose();
     super.dispose();
   }
 
-  String _formatTime(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return "$minutes:$seconds";
+  Future<void> submitTask({required String taskType}) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    setState(() {
+      isSubmitting = true; // بدء التحميل وإظهار اللودينج في الزرار
+    });
+
+    try {
+      String? uploadedAudioUrl;
+
+      if (taskType != "Writing") {
+        if (recordedFilePath == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Please record your answer first!")),
+          );
+          setState(() => isSubmitting = false);
+          return;
+        }
+
+        final file = File(recordedFilePath!);
+        final fileName =
+            'task_${widget.dayId}_${DateTime.now().millisecondsSinceEpoch}.m4a';
+
+        await Supabase.instance.client.storage
+            .from('task-answers')
+            .upload(fileName, file);
+        uploadedAudioUrl = Supabase.instance.client.storage
+            .from('task-answers')
+            .getPublicUrl(fileName);
+      } else {
+        if (!(formState.currentState?.validate() ?? false)) {
+          setState(() => isSubmitting = false);
+          return;
+        }
+      }
+
+      await FirebaseFirestore.instance
+          .collection('tasks')
+          .doc(uid)
+          .collection('UserTasks')
+          .doc(widget.dayId)
+          .update({
+            if (taskType == "Writing") 'answerText': answer.text.trim(),
+            if (taskType != "Writing") 'answerAudioUrl': uploadedAudioUrl ?? '',
+            'instructorNote': note.text.trim(),
+            'status': 'Pending',
+          });
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Task submitted successfully!",
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      print("Error submitting task: $e");
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Failed to submit: $e")));
+      setState(() {
+        isSubmitting = false; // إيقاف اللودينج في حالة حدوث خطأ
+      });
+    }
+  }
+
+  Widget _buildModernSubmissionTracker(String status) {
+    final currentStatus = status.toLowerCase();
+
+    int activeStep = 0;
+    if (currentStatus == 'pending') {
+      activeStep = 1;
+    } else if (currentStatus == 'done') {
+      activeStep = 2;
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade100,
+            blurRadius: 8,
+            spreadRadius: 2,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _trackerStepItem(
+            title: "To do",
+            isDone: activeStep >= 0,
+            isCurrent: activeStep == 0,
+          ),
+          _trackerConnector(isDone: activeStep >= 1),
+          _trackerStepItem(
+            title: "Pending",
+            isDone: activeStep >= 1,
+            isCurrent: activeStep == 1,
+          ),
+          _trackerConnector(isDone: activeStep >= 2),
+          _trackerStepItem(
+            title: "Done",
+            isDone: activeStep >= 2,
+            isCurrent: activeStep == 2,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _trackerStepItem({
+    required String title,
+    required bool isDone,
+    required bool isCurrent,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isDone ? Colors.blue : Colors.grey.shade100,
+            border: Border.all(
+              color: isCurrent
+                  ? Colors.blue
+                  : (isDone ? Colors.blue : Colors.grey.shade300),
+              width: isCurrent ? 2 : 1,
+            ),
+          ),
+          child: Center(
+            child: isDone
+                ? const Icon(Icons.check, size: 16, color: Colors.white)
+                : Text(
+                    title[0],
+                    style: TextStyle(
+                      color: isCurrent ? Colors.blue : Colors.grey.shade500,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: isCurrent || isDone ? FontWeight.bold : FontWeight.w500,
+            color: isCurrent || isDone
+                ? Colors.blue.shade800
+                : Colors.grey.shade500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _trackerConnector({required bool isDone}) {
+    return Expanded(
+      child: Container(
+        height: 2,
+        color: isDone ? Colors.blue : Colors.grey.shade300,
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+      ),
+    );
   }
 
   @override
@@ -99,14 +259,6 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                 ),
               ],
             ),
-            Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.more_horiz, color: Colors.blue),
-            ),
           ],
         ),
       ),
@@ -123,46 +275,45 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
               ),
             );
           }
-
           if (state is TaskDetailsLoaded) {
             final details = state.task;
+
+            if (!_isInitializedFromData) {
+              if (details.answerText != null &&
+                  details.answerText!.isNotEmpty) {
+                answer.text = details.answerText!;
+              }
+              if (details.instructorNote != null &&
+                  details.instructorNote!.isNotEmpty) {
+                note.text = details.instructorNote!;
+              }
+              _isInitializedFromData = true;
+            }
+
             return SingleChildScrollView(
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.amber.shade100,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          "${details.status} • ${details.type}",
-                          style: TextStyle(
-                            color: Colors.amber.shade900,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.shade100,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      "${details.status} • ${details.type}",
+                      style: TextStyle(
+                        color: Colors.amber.shade900,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    "A memorable journey",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22,
-                      color: Colors.black87,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   SelectableText(
                     details.title,
                     style: const TextStyle(
@@ -171,205 +322,10 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                       color: Colors.black87,
                     ),
                   ),
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
+
                   if (details.type == "Listening") ...[
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.shade200,
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 35,
-                                height: 35,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Icon(
-                                  Icons.headphones_rounded,
-                                  color: Colors.blue.shade600,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                "Listen to Audio",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          SliderTheme(
-                            data: SliderTheme.of(context).copyWith(
-                              trackHeight: 4,
-                              thumbShape: const RoundSliderThumbShape(
-                                enabledThumbRadius: 6,
-                              ),
-                            ),
-                            child: Slider(
-                              min: 0,
-                              max: duration.inSeconds > 0
-                                  ? duration.inSeconds.toDouble().toDouble()
-                                  : 1.0,
-                              value: position.inSeconds.toDouble().clamp(
-                                0.0,
-                                duration.inSeconds.toDouble(),
-                              ),
-                              onChanged: (value) async {
-                                final pos = Duration(seconds: value.toInt());
-                                await _audioPlayer.seek(pos);
-                                await _audioPlayer.resume();
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  _formatTime(position),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey.shade600,
-                                  ),
-                                ),
-                                Text(
-                                  _formatTime(duration),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey.shade600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.replay_5_rounded,
-                                  size: 28,
-                                  color: Colors.blueGrey,
-                                ),
-                                onPressed: () async {
-                                  final newPos =
-                                      position - const Duration(seconds: 5);
-                                  await _audioPlayer.seek(
-                                    newPos < Duration.zero
-                                        ? Duration.zero
-                                        : newPos,
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: 12),
-                              FloatingActionButton(
-                                elevation: 0,
-                                backgroundColor: Colors.blue,
-                                mini: true,
-                                onPressed: () async {
-                                  if (isPlaying) {
-                                    await _audioPlayer.pause();
-                                  } else {
-                                    await _audioPlayer.play(
-                                      UrlSource("${details.audioUrl}"),
-                                    );
-                                  }
-                                },
-                                child: Icon(
-                                  isPlaying
-                                      ? Icons.pause
-                                      : Icons.play_arrow_rounded,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.forward_5_rounded,
-                                  size: 28,
-                                  color: Colors.blueGrey,
-                                ),
-                                onPressed: () async {
-                                  final newPos =
-                                      position + const Duration(seconds: 5);
-                                  if (newPos < duration) {
-                                    await _audioPlayer.seek(newPos);
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                          const Divider(height: 24),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                "Speed: ",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              ToggleButtons(
-                                constraints: const BoxConstraints(
-                                  minWidth: 40,
-                                  minHeight: 28,
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                                isSelected: [
-                                  playbackRate == 0.5,
-                                  playbackRate == 0.75,
-                                  playbackRate == 1.0,
-                                  playbackRate == 1.5,
-                                  playbackRate == 2.0,
-                                ],
-                                onPressed: (index) async {
-                                  double speed = 1.0;
-                                  if (index == 0) speed = 0.5;
-                                  if (index == 1) speed = 0.75;
-                                  if (index == 2) speed = 1.0;
-                                  if (index == 3) speed = 1.5;
-                                  if (index == 4) speed = 2.0;
-                                  setState(() {
-                                    playbackRate = speed;
-                                  });
-                                  await _audioPlayer.setPlaybackRate(
-                                    playbackRate,
-                                  );
-                                },
-                                children: const [
-                                  Text("0.5x", style: TextStyle(fontSize: 11)),
-                                  Text("0.75x", style: TextStyle(fontSize: 11)),
-                                  Text("1x", style: TextStyle(fontSize: 11)),
-                                  Text("1.5x", style: TextStyle(fontSize: 11)),
-                                  Text("2x", style: TextStyle(fontSize: 11)),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                    VoicePaly(isTask: true, audioUrl: details.audioUrl!),
                     const SizedBox(height: 16),
                   ],
 
@@ -380,18 +336,9 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                       color: Colors.white,
                       border: Border.all(color: Colors.grey.shade300, width: 1),
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.shade100,
-                          blurRadius: 5,
-                          spreadRadius: 1,
-                        ),
-                      ],
                     ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 10),
                         Row(
                           children: [
                             Container(
@@ -401,12 +348,12 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                                 borderRadius: BorderRadius.circular(10),
                                 color: Colors.grey[200],
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.menu_book_sharp,
                                 color: Colors.blue,
                               ),
                             ),
-                            Text(
+                            const Text(
                               "  Task Content",
                               style: TextStyle(
                                 fontSize: 13,
@@ -416,167 +363,345 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 15),
-                        SelectableText(
-                          details.textContent,
-                          style: TextStyle(
-                            fontSize: 13,
-                            height: 1.5,
-                            color: Colors.grey.shade800,
+                        const SizedBox(height: 15),
+                        SelectableText.rich(
+                          TextSpan(
+                            children: details.textContent.split('\n').map((
+                              line,
+                            ) {
+                              if (line.contains(':')) {
+                                final colonIndex = line.indexOf(':');
+                                final beforeColon = line
+                                    .substring(0, colonIndex)
+                                    .trim();
+                                final afterColon = line.substring(
+                                  colonIndex + 1,
+                                );
+
+                                bool isSpeakerName =
+                                    beforeColon.length < 35 &&
+                                    !beforeColon.contains('.');
+
+                                if (isSpeakerName) {
+                                  return TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: "$beforeColon:",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: "$afterColon\n",
+                                        style: TextStyle(
+                                          color: Colors.grey.shade800,
+                                          height: 1.5,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+                              }
+
+                              return TextSpan(
+                                text: "$line\n",
+                                style: TextStyle(
+                                  color: Colors.grey.shade800,
+                                  height: 1.5,
+                                ),
+                              );
+                            }).toList(),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 15),
-                  Text(
-                    "Your response",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                  SizedBox(height: 15),
-
-                  Container(
+                  const SizedBox(height: 16),
+                  SizedBox(
                     width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.grey.shade300, width: 1),
-                      borderRadius: BorderRadius.circular(16),
+                    child: Text(
+                      "Your response",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
+                  ),
 
+                  SizedBox(
+                    width: double.infinity,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (details.type == "Writing") ...[
-                          Text(
-                            "   Text response",
+                          const Text(
+                            "Text response",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                              fontSize: 16,
                             ),
                           ),
-                          Text(
-                            "     Write your answer here",
-                            style: TextStyle(
-                              // fontWeight: FontWeight.bold,
-                              fontSize: 12,
+                          const SizedBox(height: 10),
+                          Form(
+                            key: formState,
+                            child: TextFormField(
+                              controller: answer,
+                              validator: (val) {
+                                if (val == null || val.isEmpty) {
+                                  return "Please write your task answer";
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.grey[100],
+                                hintText: "Write your answer here...",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                              maxLines: 5,
                             ),
                           ),
-
-                          Container(
-                            margin: EdgeInsets.all(10),
-                            child: Form(
-                              key: formState,
-                              child: TextFormField(
-                                controller: answer,
-                                enabled: true,
-                                validator: (value) {
-                                  return "Please Write Your Task";
-                                },
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.grey[100],
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                    borderSide: BorderSide(color: Colors.grey),
-                                  ),
-                                  hintText: "Write your answer here...  ",
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(width: 1),
-
-                                    borderRadius: BorderRadius.circular(15),
+                        ] else ...[
+                          const SizedBox(height: 10),
+                          if (recordedFilePath == null) ...[
+                            if (details.answerAudioUrl != null &&
+                                details.answerAudioUrl!.isNotEmpty)
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.green.shade50,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: Colors.green.shade200,
                                   ),
                                 ),
-
-                                maxLines: 5,
-                              ),
-                            ),
-                          ),
-                        ],
-
-                        if (details.type != "Writing") ...[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(8),
-                                decoration: BoxDecoration(color: Colors.white),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                child: Column(
                                   children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                    Row(
                                       children: [
-                                        Text(
-                                          "Voice note",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
+                                        const Icon(
+                                          Icons.check_circle,
+                                          color: Colors.green,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Expanded(
+                                          child: Text(
+                                            "Previous voice response submitted.",
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
                                         ),
-                                        Text("Record Your answer"),
                                       ],
                                     ),
-                                    Container(
-                                      margin: EdgeInsets.all(15),
-                                      width: 40,
-
-                                      color: Colors.grey[100],
-                                      child: Text("Ready"),
+                                    SizedBox(height: 10),
+                                    VoicePaly(
+                                      isTask: true,
+                                      audioUrl: details.answerAudioUrl!,
                                     ),
                                   ],
                                 ),
                               ),
-                              InkWell(
-                                onTap: () {},
-                                child: ListTile(
-                                  leading: Container(
-                                    width: 60,
-                                    height: 60,
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue[700],
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    child: Icon(
-                                      Icons.mic_none_outlined,
-                                      size: 25,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  title: Text(
-                                    "Tap to record",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  subtitle: Text("No recording saved yet"),
-                                ),
+                            const SizedBox(height: 10),
+                            VoiceRecorderWidget(
+                              onRecordingComplete: (filePath) {
+                                setState(() {
+                                  recordedFilePath = filePath;
+                                });
+                              },
+                            ),
+                          ] else
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.shade50,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.blue.shade200),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Icon(Icons.error_outline_sharp, size: 30),
-                                    SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        "Speak clearly and include the same details as the text response",
-                                        softWrap: true,
-
-                                        style: TextStyle(),
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      isAudioPlayingLocally
+                                          ? Icons.pause_circle
+                                          : Icons.play_circle,
+                                      color: Colors.blue,
+                                      size: 36,
+                                    ),
+                                    onPressed: () async {
+                                      if (isAudioPlayingLocally) {
+                                        await _localAudioPlayer.pause();
+                                        setState(
+                                          () => isAudioPlayingLocally = false,
+                                        );
+                                      } else {
+                                        await _localAudioPlayer.play(
+                                          DeviceFileSource(recordedFilePath!),
+                                        );
+                                        setState(
+                                          () => isAudioPlayingLocally = true,
+                                        );
+                                        _localAudioPlayer.onPlayerComplete
+                                            .listen((_) {
+                                              if (mounted) {
+                                                setState(
+                                                  () => isAudioPlayingLocally =
+                                                      false,
+                                                );
+                                              }
+                                            });
+                                      }
+                                    },
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Expanded(
+                                    child: Text(
+                                      "Voice note recorded successfully. Tap to listen.",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 13,
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        recordedFilePath = null;
+                                        isAudioPlayingLocally = false;
+                                      });
+                                    },
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
                         ],
                       ],
                     ),
                   ),
+                  const SizedBox(height: 15),
+                  const Text("    Note to instructor (optional)"),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                    child: TextField(
+                      controller: note,
+                      maxLines: 2,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        hintText:
+                            "Anything you'd like your instructor to know?",
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // زر الإرسال مع تفعيل اللودينج المحلي
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 50,
+                          vertical: 15,
+                        ),
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: isSubmitting
+                          ? null // تعطيل الزر أثناء التحميل لمنع التكرار
+                          : () {
+                              final hasAudioAnswer =
+                                  details.answerAudioUrl != null &&
+                                  details.answerAudioUrl!.isNotEmpty;
+                              if (hasAudioAnswer) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      title: const Text("Update Task"),
+                                      content: const Text(
+                                        "You will overwrite the previous submission.",
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            submitTask(taskType: details.type);
+                                          },
+                                          child: const Text("Update"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text("Cancel"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              } else {
+                                submitTask(taskType: details.type);
+                              }
+                            },
+                      child: isSubmitting
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            )
+                          : const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.send),
+                                SizedBox(width: 8),
+                                Text(
+                                  "Submit Task",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  SizedBox(height: 15),
+                  SizedBox(
+                    width: double.infinity,
+                    child: const Text(
+                      "Submission tracking",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  _buildModernSubmissionTracker(details.status),
+                  const SizedBox(height: 25),
                 ],
               ),
             );

@@ -1,13 +1,10 @@
-import 'package:academichub/data/model/task_details_model.dart';
-import 'package:academichub/data/repository/task_details_repository.dart';
+import 'package:academichub/business_logic/tasks/cubit/task_details_state.dart';
+import 'package:academichub/data/repository/tasks/task_details_repository.dart';
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 
-part 'task_details_state.dart';
 
 class TaskDetailsCubit extends Cubit<TaskDetailsState> {
-  final TaskDetailsRepository _taskDetailsRepository;
+  TaskDetailsRepository _taskDetailsRepository;
   TaskDetailsCubit(this._taskDetailsRepository) : super(TaskDetailsInitial());
   Future<void> fetchUserTask({
     required String uid,
@@ -28,4 +25,5 @@ class TaskDetailsCubit extends Cubit<TaskDetailsState> {
       emit(TaskDetailsError(e.toString()));
     }
   }
+
 }

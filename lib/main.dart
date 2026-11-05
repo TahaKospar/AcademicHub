@@ -1,7 +1,7 @@
 import 'package:academichub/firebase_options.dart';
 import 'package:academichub/business_logic/tasks/cubit/tasks_cubit.dart';
-import 'package:academichub/data/repository/task_repository.dart';
-import 'package:academichub/data/services/task_services.dart';
+import 'package:academichub/data/repository/tasks/task_repository.dart';
+import 'package:academichub/data/services/tasks/task_services.dart';
 import 'package:academichub/presentation/screens/auth/auth_screen.dart';
 import 'package:academichub/presentation/screens/home/main_screen.dart';
 import 'package:academichub/presentation/widgets/app_router.dart';
@@ -16,14 +16,19 @@ import 'package:academichub/presentation/screens/home/notificationsScreen.dart';
 import 'package:academichub/presentation/screens/profile/accountSettingsScreen.dart';
 import 'package:academichub/presentation/screens/profile/helpScreen.dart';
 import 'package:academichub/presentation/screens/profile/profileScreen.dart';
-import 'package:academichub/presentation/screens/tasks/task_details_screen.dart';
 import 'package:academichub/presentation/screens/tasks/tasks_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Supabase.initialize(
+    url: 'https://tuthaqwdylyiiktedhmw.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dGhhcXdkeWx5aWlrdGVkaG13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI5NDkwNDgsImV4cCI6MjEwODUyNTA0OH0.QPFPavGJ29QFzqUnmk_JroaKnf7xRiat8uZ0DHJ2p6w',
+  );
   runApp(AcademicHub());
 }
 

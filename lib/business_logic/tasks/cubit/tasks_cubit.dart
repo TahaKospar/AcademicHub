@@ -1,5 +1,5 @@
-import 'package:academichub/data/model/task_model.dart';
-import 'package:academichub/data/repository/task_repository.dart';
+import 'package:academichub/data/model/tassk/task_model.dart';
+import 'package:academichub/data/repository/tasks/task_repository.dart';
 import 'package:bloc/bloc.dart';
 
 part 'tasks_state.dart';

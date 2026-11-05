@@ -1,5 +1,5 @@
-import 'package:academichub/data/services/task_details_services.dart';
-import 'package:academichub/data/model/task_details_model.dart';
+import 'package:academichub/data/services/tasks/task_details_services.dart';
+import 'package:academichub/data/model/tassk/task_details_model.dart';
 
 class TaskDetailsRepository {
   final TaskDetailsServices _services = TaskDetailsServices();

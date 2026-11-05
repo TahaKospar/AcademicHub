@@ -6,6 +6,7 @@ class TaskDetailsModel {
   final String title;
   final String type;
   final String status;
+  final String? instructorNote;
 
   final String? answerText;
   final String? answerAudioUrl;
@@ -23,6 +24,7 @@ class TaskDetailsModel {
     this.answerAudioUrl,
     this.submittedAt,
     this.completedAt,
+    this.instructorNote,
   });
 
   factory TaskDetailsModel.fromMap(Map<String, dynamic> map) {

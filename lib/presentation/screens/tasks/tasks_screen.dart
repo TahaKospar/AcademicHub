@@ -1,8 +1,8 @@
 import 'package:academichub/business_logic/tasks/cubit/task_details_cubit.dart';
 import 'package:academichub/business_logic/tasks/cubit/tasks_cubit.dart';
 import 'package:academichub/constants/strings/strings.dart';
-import 'package:academichub/data/model/task_model.dart';
-import 'package:academichub/data/repository/task_details_repository.dart';
+import 'package:academichub/data/model/tassk/task_model.dart';
+import 'package:academichub/data/repository/tasks/task_details_repository.dart';
 import 'package:academichub/presentation/screens/tasks/task_details_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +72,7 @@ class _TasksscreenState extends State<Tasksscreen> {
         iconData = Icons.access_time_rounded;
         primaryColor = Colors.amber;
       case "To Do":
-        iconData = Icons.menu_book_rounded;
+        iconData = Icons.pending_actions_rounded;
         primaryColor = Colors.red;
       default:
         iconData = Icons.multitrack_audio_rounded;
@@ -217,7 +217,7 @@ class _TasksscreenState extends State<Tasksscreen> {
                                     fontSize: 30,
                                   ),
                                 ),
-                                Text("Completed"),
+                                Text("Done"),
                               ],
                             ),
                             Row(

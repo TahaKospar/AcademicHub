@@ -1,4 +1,4 @@
-import 'package:academichub/data/services/authService.dart';
+import 'package:academichub/data/services/auth/authService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 

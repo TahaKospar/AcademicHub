@@ -1,4 +1,4 @@
-import 'package:academichub/data/model/task_model.dart';
+import 'package:academichub/data/model/tassk/task_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TaskServices {
