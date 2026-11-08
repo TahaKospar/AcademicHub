@@ -1,4 +1,4 @@
-import 'package:academichub/business_logic/tasks/cubit/task_details_state.dart';
+import 'package:academichub/business_logic/tasks/task_details_state.dart';
 import 'package:academichub/data/repository/tasks/task_details_repository.dart';
 import 'package:bloc/bloc.dart';
 

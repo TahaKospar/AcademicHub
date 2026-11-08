@@ -7,6 +7,8 @@
         "Coursesscreen",
         "Helpscreen",
         "Homescreen",
+        "Instructorfeedback",
+        "Intials",
         "Loginwidget",
         "NORTHBRIDGE",
         "Notificationsscreen",
@@ -14,6 +16,7 @@
         "Splashscreen",
         "Taskdetailsscreen",
         "Tasksscreen",
+        "useruid",
         "Welcomescreen"
     ]
 }

@@ -14,12 +14,10 @@ class CourseModel {
   });
 }
 
-
-
 class TaskSummaryModel {
   final String id;
   final String title;
-  final String type; 
+  final String type;
   final String time;
   final bool isCompleted;
 
@@ -32,15 +30,13 @@ class TaskSummaryModel {
   });
 }
 
-
-
 class HomePageModel {
   final String userName;
-  final String userInitial; 
-  final double overallProgress; 
-  final Map<String, double> sectionProgress; 
-  final CourseModel? activeCourse; 
-  final List<TaskSummaryModel> todoTasks; 
+  final String userInitial;
+  final double overallProgress;
+  final Map<String, double> sectionProgress;
+  final CourseModel? activeCourse;
+  final List<TaskSummaryModel> todoTasks;
 
   HomePageModel({
     required this.userName,

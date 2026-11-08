@@ -12,4 +12,5 @@ const String notificationsScreen = '/notifications';
 const String taskDetailsScreen = '/taskDetails';
 const String accountSettingsScreen = '/accountSettings';
 const String helpScreen = '/help';
+const String instructorFeedback = '/instructorFeedback';
 

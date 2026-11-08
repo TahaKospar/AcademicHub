@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:academichub/business_logic/tasks/cubit/task_details_cubit.dart';
-import 'package:academichub/business_logic/tasks/cubit/task_details_state.dart';
+import 'package:academichub/business_logic/tasks/task_details_cubit.dart';
+import 'package:academichub/business_logic/tasks/task_details_state.dart';
 import 'package:academichub/presentation/widgets/voice_paly.dart';
 import 'package:academichub/presentation/widgets/voice_recorder_widget.dart';
 import 'package:audioplayers/audioplayers.dart';

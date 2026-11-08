@@ -10,6 +10,6 @@ class Helpscreen extends StatefulWidget {
 class _HelpscreenState extends State<Helpscreen> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(appBar: AppBar());
   }
 }

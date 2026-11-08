@@ -1,19 +1,23 @@
+import 'package:academichub/business_logic/profile/profile_cubit.dart';
+import 'package:academichub/business_logic/theme/theme_cubit.dart';
+import 'package:academichub/presentation/screens/profile/instructorFeedback.dart';
+import 'package:academichub/data/repository/profile_repository/profile_repository.dart';
 import 'package:academichub/firebase_options.dart';
-import 'package:academichub/business_logic/tasks/cubit/tasks_cubit.dart';
+import 'package:academichub/business_logic/home/home_page_cubit.dart';
+import 'package:academichub/business_logic/tasks/tasks_cubit.dart';
+import 'package:academichub/data/repository/home/home_page_repository.dart';
 import 'package:academichub/data/repository/tasks/task_repository.dart';
 import 'package:academichub/data/services/tasks/task_services.dart';
-import 'package:academichub/presentation/screens/auth/auth_screen.dart';
-import 'package:academichub/presentation/screens/home/main_screen.dart';
 import 'package:academichub/presentation/widgets/app_router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:academichub/constants/strings/strings.dart';
 import 'package:academichub/presentation/screens/auth/splash_screen.dart';
 import 'package:academichub/presentation/screens/auth/welcome_screen.dart';
+import 'package:academichub/presentation/screens/auth/auth_screen.dart';
 import 'package:academichub/presentation/screens/chat/chatScreen.dart';
 import 'package:academichub/presentation/screens/courses/coursesScreen.dart';
 import 'package:academichub/presentation/screens/home/home_screen.dart';
 import 'package:academichub/presentation/screens/home/notificationsScreen.dart';
-import 'package:academichub/presentation/screens/profile/accountSettingsScreen.dart';
 import 'package:academichub/presentation/screens/profile/helpScreen.dart';
 import 'package:academichub/presentation/screens/profile/profileScreen.dart';
 import 'package:academichub/presentation/screens/tasks/tasks_screen.dart';
@@ -23,56 +27,80 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   await Supabase.initialize(
     url: 'https://tuthaqwdylyiiktedhmw.supabase.co',
+    // ignore: deprecated_member_use
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dGhhcXdkeWx5aWlrdGVkaG13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI5NDkwNDgsImV4cCI6MjEwODUyNTA0OH0.QPFPavGJ29QFzqUnmk_JroaKnf7xRiat8uZ0DHJ2p6w',
   );
-  runApp(AcademicHub());
+
+  runApp(const AcademicHub());
 }
 
-class AcademicHub extends StatefulWidget {
+class AcademicHub extends StatelessWidget {
   const AcademicHub({super.key});
 
   @override
-  State<AcademicHub> createState() => _AcademicHubState();
-}
-
-class _AcademicHubState extends State<AcademicHub> {
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => TasksCubit(TaskRepository(TaskServices())),
-      child: MaterialApp(
-        themeMode: ThemeMode.light,
-        title: 'AcademicHub',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          brightness: Brightness.light,
-          primarySwatch: Colors.blue,
-          scaffoldBackgroundColor: Colors.white,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<TasksCubit>(
+          create: (_) => TasksCubit(TaskRepository(TaskServices())),
         ),
-        darkTheme: ThemeData(
-          brightness: Brightness.dark,
-          primarySwatch: Colors.blue,
-          scaffoldBackgroundColor: Colors.black,
+        BlocProvider<HomePageCubit>(
+          create: (_) => HomePageCubit(HomePageRepository()),
         ),
-        initialRoute: splashScreen,
-        onGenerateRoute: generateRoute,
-        routes: {
-          splashScreen: (_) => const Splashscreen(),
-          authScreen: (_) => const Authscreen(),
-          welcomeScreen: (_) => const Welcomescreen(),
-          mainScreen: (_) => const MainScreen(),
-          homeScreen: (_) => const Homescreen(),
-          coursesScreen: (_) => const Coursesscreen(),
-          chatScreen: (_) => const Chatscreen(),
-          tasksScreen: (_) => const Tasksscreen(),
-          profileScreen: (_) => const Profilescreen(),
-          notificationsScreen: (_) => const Notificationsscreen(),
-          accountSettingsScreen: (_) => const Accountsettingsscreen(),
-          helpScreen: (_) => const Helpscreen(),
+        BlocProvider<ProfileCubit>(
+          create: (_) => ProfileCubit(ProfileRepository()),
+        ),
+        BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
+        BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
+      ],
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return MaterialApp(
+            themeMode: themeMode,
+            title: 'AcademicHub',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              brightness: Brightness.light,
+              scaffoldBackgroundColor: const Color(0xFFF8F9FA),
+              cardColor: Colors.white,
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.blue,
+                brightness: Brightness.light,
+              ),
+            ),
+
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              scaffoldBackgroundColor: const Color(0xFF121212),
+              cardColor: const Color(0xFF1E1E1E),
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.blue,
+                brightness: Brightness.dark,
+              ),
+            ),
+            initialRoute: splashScreen,
+            onGenerateRoute: generateRoute,
+            routes: {
+              splashScreen: (_) => const Splashscreen(),
+              authScreen: (_) => const Authscreen(),
+              welcomeScreen: (_) => const Welcomescreen(),
+              homeScreen: (_) => const Homescreen(),
+              coursesScreen: (_) => const Coursesscreen(),
+              chatScreen: (_) => const Chatscreen(),
+              tasksScreen: (_) => const Tasksscreen(),
+              profileScreen: (_) => const Profilescreen(),
+              notificationsScreen: (_) => const Notificationsscreen(),
+              instructorFeedback: (_) => const Instructorfeedback(),
+              // accountSettingsScreen: (_) => const AccountSettingsScreen(),
+              helpScreen: (_) => const Helpscreen(),
+            },
+          );
         },
       ),
     );

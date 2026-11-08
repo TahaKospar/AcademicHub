@@ -10,6 +10,6 @@ class Notificationsscreen extends StatefulWidget {
 class _NotificationsscreenState extends State<Notificationsscreen> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(appBar: AppBar());
   }
 }

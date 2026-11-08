@@ -1,6 +1,5 @@
-import 'package:academichub/business_logic/tasks/cubit/task_details_cubit.dart';
-import 'package:academichub/business_logic/tasks/cubit/tasks_cubit.dart';
-import 'package:academichub/constants/strings/strings.dart';
+import 'package:academichub/business_logic/tasks/task_details_cubit.dart';
+import 'package:academichub/business_logic/tasks/tasks_cubit.dart';
 import 'package:academichub/data/model/tassk/task_model.dart';
 import 'package:academichub/data/repository/tasks/task_details_repository.dart';
 import 'package:academichub/presentation/screens/tasks/task_details_screen.dart';

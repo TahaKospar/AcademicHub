@@ -1,7 +1,6 @@
 import 'package:academichub/data/model/home/home_page_model.dart';
 import 'package:academichub/data/repository/home/home_page_repository.dart';
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 
 part 'home_page_state.dart';
 

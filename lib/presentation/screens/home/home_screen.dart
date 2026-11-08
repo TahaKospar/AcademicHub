@@ -1,3 +1,6 @@
+import 'package:academichub/business_logic/tasks/task_details_cubit.dart';
+import 'package:academichub/data/repository/tasks/task_details_repository.dart';
+import 'package:academichub/presentation/screens/tasks/task_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -12,93 +15,98 @@ const Color darkText = Color(0xFF0F172A);
 const Color secondaryText = Color(0xFF64748B);
 
 class Homescreen extends StatefulWidget {
-  const Homescreen({super.key});
+  final Function(int)? onNavigate;
+
+  const Homescreen({super.key, this.onNavigate});
 
   @override
   State<Homescreen> createState() => _HomescreenState();
 }
 
 class _HomescreenState extends State<Homescreen> {
-  int selectedIndex = 0;
-
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final userId = FirebaseAuth.instance.currentUser?.uid;
-
-      if (userId != null && mounted) {
-        context.read<HomePageCubit>().fetchDashboardData(userId);
-      }
+      _fetchDashboard();
     });
+  }
+
+  void _fetchDashboard() {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId != null && mounted) {
+      context.read<HomePageCubit>().fetchDashboardData(userId);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      body: SafeArea(
-        child: BlocBuilder<HomePageCubit, HomePageState>(
-          builder: (context, state) {
-            if (state is HomePageLoading || state is HomePageInitial) {
-              return const Center(
-                child: CircularProgressIndicator(color: primaryBlue),
-              );
-            }
+    return SafeArea(
+      child: BlocBuilder<HomePageCubit, HomePageState>(
+        builder: (context, state) {
+          if (state is HomePageLoading || state is HomePageInitial) {
+            return const Center(
+              child: CircularProgressIndicator(color: primaryBlue),
+            );
+          }
 
-            if (state is HomePageError) {
-              return _buildError(state.message);
-            }
+          if (state is HomePageError) {
+            return _buildError(state.message);
+          }
 
-            if (state is HomePageSuccess) {
-              return _buildDashboard(state.homePageModel);
-            }
+          if (state is HomePageSuccess) {
+            return _buildDashboard(state.homePageModel);
+          }
 
-            return const SizedBox();
-          },
-        ),
+          return const SizedBox.shrink();
+        },
       ),
-      bottomNavigationBar: _buildBottomNavigation(),
     );
   }
 
   Widget _buildDashboard(HomePageModel model) {
-    return CustomScrollView(
-      slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-          sliver: SliverList(
-            delegate: SliverChildListDelegate([
-              _buildHeader(),
-              const SizedBox(height: 28),
+    return RefreshIndicator(
+      color: primaryBlue,
+      onRefresh: () async => _fetchDashboard(),
+      child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 30),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                _buildHeader(),
+                const SizedBox(height: 28),
 
-              _buildWelcome(model),
-              const SizedBox(height: 24),
+                _buildWelcome(model),
+                const SizedBox(height: 24),
 
-              _buildProgressCard(model),
-              const SizedBox(height: 24),
+                _buildProgressCard(model),
+                const SizedBox(height: 24),
 
-              _buildSectionHeader('Active Courses', 'Your current course'),
-              const SizedBox(height: 14),
+                _buildSectionHeader('Active Courses', 'Your current course'),
+                const SizedBox(height: 14),
+                _buildActiveCourse(model.activeCourse),
+                const SizedBox(height: 24),
 
-              _buildActiveCourse(model.activeCourse),
-              const SizedBox(height: 24),
+                _buildSectionHeader('To-Do Tasks', 'Tasks waiting for you'),
+                const SizedBox(height: 14),
+                _buildTasks(model.todoTasks),
+                const SizedBox(height: 24),
 
-              _buildSectionHeader('To-Do Tasks', 'Tasks waiting for you'),
-              const SizedBox(height: 14),
-
-              _buildTasks(model.todoTasks),
-              const SizedBox(height: 24),
-
-              _buildSectionHeader('Quick Destinations', 'Explore AcademicHub'),
-              const SizedBox(height: 14),
-
-              _buildQuickDestinations(),
-            ]),
+                _buildSectionHeader(
+                  'Quick Destinations',
+                  'Explore AcademicHub',
+                ),
+                const SizedBox(height: 14),
+                _buildQuickDestinations(),
+              ]),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -107,10 +115,10 @@ class _HomescreenState extends State<Homescreen> {
   Widget _buildHeader() {
     return Row(
       children: [
-        Expanded(
+        const Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 'AcademicHub',
                 style: TextStyle(
@@ -202,7 +210,15 @@ class _HomescreenState extends State<Homescreen> {
   // Progress
 
   Widget _buildProgressCard(HomePageModel model) {
-    final progress = model.overallProgress.clamp(0.0, 1.0);
+    final progress = model.overallProgress.clamp(0.0, 1.0).toDouble();
+
+    const sectionOrder = [
+      'Listening',
+      'Reading',
+      'Speaking',
+      'Writing',
+      'Pronunciation',
+    ];
 
     return _card(
       child: Column(
@@ -235,7 +251,7 @@ class _HomescreenState extends State<Homescreen> {
             children: [
               CircularPercentIndicator(
                 radius: 48,
-                lineWidth: 9,
+                lineWidth: 8,
                 percent: progress,
                 animation: true,
                 animationDuration: 900,
@@ -263,10 +279,11 @@ class _HomescreenState extends State<Homescreen> {
               const SizedBox(width: 25),
               Expanded(
                 child: Column(
-                  children: model.sectionProgress.entries.map((entry) {
+                  children: sectionOrder.map((section) {
+                    final value = model.sectionProgress[section] ?? 0.0;
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 13),
-                      child: _buildSectionProgress(entry.key, entry.value),
+                      padding: const EdgeInsets.only(bottom: 11),
+                      child: _buildSectionProgress(section, value),
                     );
                   }).toList(),
                 ),
@@ -279,7 +296,7 @@ class _HomescreenState extends State<Homescreen> {
   }
 
   Widget _buildSectionProgress(String title, double value) {
-    final progress = value.clamp(0.0, 1.0);
+    final progress = value.clamp(0.0, 1.0).toDouble();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,7 +307,7 @@ class _HomescreenState extends State<Homescreen> {
               child: Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   color: secondaryText,
                   fontWeight: FontWeight.w500,
                 ),
@@ -315,7 +332,7 @@ class _HomescreenState extends State<Homescreen> {
           progressColor: primaryBlue,
           barRadius: const Radius.circular(10),
           animation: true,
-          animationDuration: 800,
+          animationDuration: 900,
         ),
       ],
     );
@@ -328,11 +345,15 @@ class _HomescreenState extends State<Homescreen> {
       return _card(
         child: const Padding(
           padding: EdgeInsets.symmetric(vertical: 15),
-          child: Center(
-            child: Text(
-              'No active course at the moment',
-              style: TextStyle(color: secondaryText),
-            ),
+          child: Column(
+            children: [
+              Icon(Icons.menu_book_outlined, size: 30, color: secondaryText),
+              SizedBox(height: 9),
+              Text(
+                'No active course at the moment',
+                style: TextStyle(color: secondaryText, fontSize: 13),
+              ),
+            ],
           ),
         ),
       );
@@ -374,7 +395,9 @@ class _HomescreenState extends State<Homescreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      course.instructor,
+                      course.instructor.isEmpty
+                          ? 'Instructor not assigned'
+                          : course.instructor,
                       style: const TextStyle(
                         fontSize: 12,
                         color: secondaryText,
@@ -383,23 +406,17 @@ class _HomescreenState extends State<Homescreen> {
                   ],
                 ),
               ),
-              const Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 15,
-                color: secondaryText,
-              ),
             ],
           ),
           const SizedBox(height: 18),
           const Divider(color: Color(0xFFF1F5F9)),
           const SizedBox(height: 12),
-
-          _courseInfoRow(
-            Icons.calendar_month_rounded,
-            'Meeting Schedule',
-            course.schedule,
-          ),
-
+          if (course.schedule.trim().isNotEmpty)
+            _courseInfoRow(
+              Icons.calendar_month_rounded,
+              'Meeting Schedule',
+              course.schedule,
+            ),
           if (course.details.trim().isNotEmpty) ...[
             const SizedBox(height: 14),
             _courseInfoRow(
@@ -408,6 +425,11 @@ class _HomescreenState extends State<Homescreen> {
               course.details,
             ),
           ],
+          if (course.schedule.trim().isEmpty && course.details.trim().isEmpty)
+            const Text(
+              'No additional course information yet.',
+              style: TextStyle(color: secondaryText, fontSize: 12),
+            ),
         ],
       ),
     );
@@ -447,79 +469,116 @@ class _HomescreenState extends State<Homescreen> {
     );
   }
 
-  // Tasks
+  // To-Do Tasks
 
   Widget _buildTasks(List<TaskSummaryModel> tasks) {
     if (tasks.isEmpty) {
-      return _card(
-        child: const Padding(
-          padding: EdgeInsets.symmetric(vertical: 15),
-          child: Center(
-            child: Text(
-              'You have no pending tasks',
-              style: TextStyle(color: secondaryText),
+      return Center(
+        child: _card(
+          child: const Padding(
+            padding: EdgeInsets.symmetric(vertical: 15),
+            child: Column(
+              children: [
+                Icon(Icons.task_alt_rounded, color: Colors.green, size: 30),
+                SizedBox(height: 9),
+                Text(
+                  'You have no tasks to do',
+                  style: TextStyle(color: secondaryText, fontSize: 13),
+                ),
+              ],
             ),
           ),
         ),
       );
     }
 
-    return Column(
-      children: tasks.take(2).map((task) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: _card(
-            child: Row(
-              children: [
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF7ED),
-                    borderRadius: BorderRadius.circular(12),
+    return Container(
+      child: Column(
+        children: tasks.take(3).map((task) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: _card(
+              child: Row(
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF7ED),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.assignment_outlined,
+                      color: Color(0xFFF59E0B),
+                      size: 21,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.assignment_outlined,
-                    color: Color(0xFFF59E0B),
-                    size: 21,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        task.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: darkText,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => BlocProvider(
+                              create: (context) =>
+                                  TaskDetailsCubit(TaskDetailsRepository()),
+                              child: Taskdetailsscreen(dayId: task.id),
+                            ),
+                          ),
+                        );
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            task.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: darkText,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            task.time.isEmpty
+                                ? task.type
+                                : '${task.id} • ${task.type} • ${task.time}',
+                            style: const TextStyle(
+                              color: secondaryText,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 5),
-                      Text(
-                        '${task.type} • ${task.time}',
-                        style: const TextStyle(
-                          color: secondaryText,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-                const Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 14,
-                  color: secondaryText,
-                ),
-              ],
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF7ED),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      'To Do',
+                      style: TextStyle(
+                        color: Color(0xFFD97706),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -529,17 +588,34 @@ class _HomescreenState extends State<Homescreen> {
     return Row(
       children: [
         Expanded(
-          child: _destinationItem(Icons.calendar_month_rounded, 'Calendar'),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: _destinationItem(
-            Icons.chat_bubble_outline_rounded,
-            'Messages',
+          child: InkWell(
+            onTap: () {
+              widget.onNavigate?.call(1);
+            },
+            child: _destinationItem(Icons.menu_book_rounded, 'Courses'),
           ),
         ),
         const SizedBox(width: 10),
-        Expanded(child: _destinationItem(Icons.assignment_outlined, 'Tasks')),
+        Expanded(
+          child: InkWell(
+            onTap: () {
+              widget.onNavigate!.call(2);
+            },
+            child: _destinationItem(
+              Icons.chat_bubble_outline_rounded,
+              'Messages',
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: InkWell(
+            onTap: () {
+              widget.onNavigate!.call(3);
+            },
+            child: _destinationItem(Icons.assignment_outlined, 'Tasks'),
+          ),
+        ),
       ],
     );
   }
@@ -612,73 +688,6 @@ class _HomescreenState extends State<Homescreen> {
     );
   }
 
-  // Bottom Navigation
-
-  Widget _buildBottomNavigation() {
-    final items = [
-      (Icons.home_rounded, 'Home'),
-      (Icons.calendar_month_rounded, 'Calendar'),
-      (Icons.assignment_outlined, 'Tasks'),
-      (Icons.chat_bubble_outline_rounded, 'Chat'),
-      (Icons.person_outline_rounded, 'Profile'),
-    ];
-
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFF1F5F9))),
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 9),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(items.length, (index) {
-              final isSelected = selectedIndex == index;
-
-              return InkWell(
-                onTap: () {
-                  setState(() {
-                    selectedIndex = index;
-                  });
-                },
-                borderRadius: BorderRadius.circular(12),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 9,
-                    vertical: 5,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        items[index].$1,
-                        size: 22,
-                        color: isSelected ? primaryBlue : secondaryText,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        items[index].$2,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          color: isSelected ? primaryBlue : secondaryText,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }),
-          ),
-        ),
-      ),
-    );
-  }
-
   // Error
 
   Widget _buildError(String message) {
@@ -710,13 +719,7 @@ class _HomescreenState extends State<Homescreen> {
             ),
             const SizedBox(height: 18),
             ElevatedButton(
-              onPressed: () {
-                final userId = FirebaseAuth.instance.currentUser?.uid;
-
-                if (userId != null) {
-                  context.read<HomePageCubit>().fetchDashboardData(userId);
-                }
-              },
+              onPressed: _fetchDashboard,
               child: const Text('Try Again'),
             ),
           ],
