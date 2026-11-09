@@ -1,5 +1,6 @@
 import 'package:academichub/constants/strings/strings.dart';
 import 'package:academichub/presentation/widgets/text_field.dart';
+import 'package:academichub/presentation/theme/task_status_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:academichub/business_logic/auth/cubit/auth_cubit.dart';
@@ -26,6 +27,8 @@ class _LoginWidgetState extends State<LoginWidget> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final med = mediaQuery.size.width;
+    final colors = Theme.of(context).colorScheme;
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
@@ -34,18 +37,27 @@ class _LoginWidgetState extends State<LoginWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 "Welcome Back! 👋",
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: colors.adaptiveColor(
+                    light: Colors.black87,
+                    dark: colors.onSurface,
+                  ),
                 ),
               ),
               const SizedBox(height: 6),
-              const Text(
+              Text(
                 "Sign in to continue exploring AcademicHub",
-                style: TextStyle(color: Colors.grey, fontSize: 14),
+                style: TextStyle(
+                  color: colors.adaptiveColor(
+                    light: Colors.grey,
+                    dark: colors.onSurfaceVariant,
+                  ),
+                  fontSize: 14,
+                ),
               ),
               const SizedBox(height: 20),
 
@@ -81,7 +93,10 @@ class _LoginWidgetState extends State<LoginWidget> {
                   child: Text(
                     "Forgot Password?",
                     style: TextStyle(
-                      color: Colors.blue[900],
+                      color: colors.adaptiveColor(
+                        light: Colors.blue.shade900,
+                        dark: colors.primary,
+                      ),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -99,7 +114,10 @@ class _LoginWidgetState extends State<LoginWidget> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text("Welcome back"),
-                        backgroundColor: Colors.grey,
+                        backgroundColor: colors.adaptiveColor(
+                          light: Colors.grey,
+                          dark: colors.inverseSurface,
+                        ),
                         duration: Duration(seconds: 2),
                         behavior: SnackBarBehavior.floating,
                       ),
@@ -110,8 +128,17 @@ class _LoginWidgetState extends State<LoginWidget> {
                         content: Text(
                           state.errorMessage,
                           textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: colors.adaptiveColor(
+                              light: Colors.white,
+                              dark: colors.onError,
+                            ),
+                          ),
                         ),
-                        backgroundColor: Colors.red,
+                        backgroundColor: colors.adaptiveColor(
+                          light: Colors.red,
+                          dark: colors.error,
+                        ),
                         duration: Duration(seconds: 2),
                         behavior: SnackBarBehavior.floating,
                       ),
@@ -120,15 +147,27 @@ class _LoginWidgetState extends State<LoginWidget> {
                 },
                 builder: (context, state) {
                   if (state is AuthLoadingState) {
-                    return const Center(
-                      child: CircularProgressIndicator(color: Colors.white),
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: colors.adaptiveColor(
+                          light: Colors.white,
+                          dark: colors.primary,
+                        ),
+                      ),
                     );
                   }
                   return SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue[900],
+                        backgroundColor: colors.adaptiveColor(
+                          light: Colors.blue.shade900,
+                          dark: colors.primary,
+                        ),
+                        foregroundColor: colors.adaptiveColor(
+                          light: Colors.white,
+                          dark: colors.onPrimary,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
@@ -142,12 +181,15 @@ class _LoginWidgetState extends State<LoginWidget> {
                           );
                         }
                       },
-                      child: const Text(
+                      child: Text(
                         "Sign In",
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: colors.adaptiveColor(
+                            light: Colors.white,
+                            dark: colors.onPrimary,
+                          ),
                         ),
                       ),
                     ),

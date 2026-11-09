@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:academichub/presentation/theme/task_status_colors.dart';
 
 class VoicePaly extends StatefulWidget {
   bool isTask;
@@ -59,15 +60,20 @@ class _VoicePalyState extends State<VoicePaly> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return widget.isTask
         ? Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.shade200,
+                  color: colors.adaptiveColor(
+                    light: Colors.grey.shade200,
+                    dark: colors.shadow.withValues(alpha: 0.08),
+                  ),
                   blurRadius: 10,
                   spreadRadius: 2,
                 ),
@@ -81,12 +87,18 @@ class _VoicePalyState extends State<VoicePaly> {
                       width: 35,
                       height: 35,
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: colors.adaptiveColor(
+                          light: Colors.grey.shade200,
+                          dark: colors.surfaceContainerHighest,
+                        ),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Icon(
                         Icons.headphones_rounded,
-                        color: Colors.blue.shade600,
+                        color: colors.adaptiveColor(
+                          light: Colors.blue.shade600,
+                          dark: colors.primary,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -132,14 +144,20 @@ class _VoicePalyState extends State<VoicePaly> {
                         _formatTime(position),
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.shade600,
+                          color: colors.adaptiveColor(
+                            light: Colors.grey.shade600,
+                            dark: colors.onSurfaceVariant,
+                          ),
                         ),
                       ),
                       Text(
                         _formatTime(duration),
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.shade600,
+                          color: colors.adaptiveColor(
+                            light: Colors.grey.shade600,
+                            dark: colors.onSurfaceVariant,
+                          ),
                         ),
                       ),
                     ],
@@ -150,10 +168,13 @@ class _VoicePalyState extends State<VoicePaly> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.replay_5_rounded,
                         size: 28,
-                        color: Colors.blueGrey,
+                        color: colors.adaptiveColor(
+                          light: Colors.blueGrey,
+                          dark: colors.onSurfaceVariant,
+                        ),
                       ),
                       onPressed: () async {
                         final newPos = position - const Duration(seconds: 5);
@@ -165,7 +186,14 @@ class _VoicePalyState extends State<VoicePaly> {
                     const SizedBox(width: 12),
                     FloatingActionButton(
                       elevation: 0,
-                      backgroundColor: Colors.blue,
+                      backgroundColor: colors.adaptiveColor(
+                        light: Colors.blue,
+                        dark: colors.primary,
+                      ),
+                      foregroundColor: colors.adaptiveColor(
+                        light: Colors.white,
+                        dark: colors.onPrimary,
+                      ),
                       mini: true,
                       onPressed: () async {
                         if (widget.audioUrl == null ||
@@ -187,15 +215,21 @@ class _VoicePalyState extends State<VoicePaly> {
                       },
                       child: Icon(
                         isPlaying ? Icons.pause : Icons.play_arrow_rounded,
-                        color: Colors.white,
+                        color: colors.adaptiveColor(
+                          light: Colors.white,
+                          dark: colors.onPrimary,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.forward_5_rounded,
                         size: 28,
-                        color: Colors.blueGrey,
+                        color: colors.adaptiveColor(
+                          light: Colors.blueGrey,
+                          dark: colors.onSurfaceVariant,
+                        ),
                       ),
                       onPressed: () async {
                         final newPos = position + const Duration(seconds: 5);

@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'package:academichub/data/services/voices/voice_recorder_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:academichub/presentation/theme/task_status_colors.dart';
 
 class VoiceRecorderWidget extends StatefulWidget {
   final Function(String filePath) onRecordingComplete;
-  final VoidCallback? onRecordingStarted; 
+  final VoidCallback? onRecordingStarted;
   final VoidCallback? onCancelled;
-  
+
   const VoiceRecorderWidget({
     super.key,
     required this.onRecordingComplete,
@@ -17,6 +18,7 @@ class VoiceRecorderWidget extends StatefulWidget {
   @override
   State<VoiceRecorderWidget> createState() => _VoiceRecorderWidgetState();
 }
+
 class _VoiceRecorderWidgetState extends State<VoiceRecorderWidget> {
   final VoiceRecorderController _recorderController = VoiceRecorderController();
 
@@ -52,23 +54,32 @@ class _VoiceRecorderWidgetState extends State<VoiceRecorderWidget> {
   }
 
   @override
-  Widget build(context) {
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     bool isRecording = _recorderController.isRecording;
 
     if (isRecording) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.12),
+              color: colors.adaptiveColor(
+                light: const Color(0x1F000000),
+                dark: colors.shadow.withValues(alpha: 0.12),
+              ),
               blurRadius: 12,
               offset: const Offset(0, -2),
             ),
           ],
-          border: Border.all(color: Colors.red.withOpacity(0.3)),
+          border: Border.all(
+            color: colors.adaptiveColor(
+              light: const Color(0x4DFF0000),
+              dark: colors.error.withValues(alpha: 0.3),
+            ),
+          ),
         ),
         child: Row(
           children: [
@@ -81,22 +92,35 @@ class _VoiceRecorderWidgetState extends State<VoiceRecorderWidget> {
                   widget.onCancelled!();
                 }
               },
-              child: const Padding(
-                padding: EdgeInsets.all(4.0),
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
                 child: Icon(
                   Icons.delete_outline_rounded,
-                  color: Colors.grey,
+                  color: colors.adaptiveColor(
+                    light: Colors.grey,
+                    dark: colors.onSurfaceVariant,
+                  ),
                   size: 24,
                 ),
               ),
             ),
             const SizedBox(width: 12),
-            const Icon(Icons.fiber_manual_record, color: Colors.red, size: 14),
+            Icon(
+              Icons.fiber_manual_record,
+              color: colors.adaptiveColor(
+                light: Colors.red,
+                dark: colors.error,
+              ),
+              size: 14,
+            ),
             const SizedBox(width: 6),
             Text(
               _formatDuration(_recordDuration),
-              style: const TextStyle(
-                color: Colors.red,
+              style: TextStyle(
+                color: colors.adaptiveColor(
+                  light: Colors.red,
+                  dark: colors.error,
+                ),
                 fontWeight: FontWeight.bold,
                 fontSize: 15,
               ),
@@ -108,7 +132,10 @@ class _VoiceRecorderWidgetState extends State<VoiceRecorderWidget> {
                 _recorderController.isPaused
                     ? Icons.play_arrow_rounded
                     : Icons.pause_rounded,
-                color: Colors.orange,
+                color: colors.adaptiveColor(
+                  light: Colors.orange,
+                  dark: colors.tertiary,
+                ),
                 size: 26,
               ),
               onPressed: () async {
@@ -135,13 +162,19 @@ class _VoiceRecorderWidgetState extends State<VoiceRecorderWidget> {
               },
               child: Container(
                 padding: const EdgeInsets.all(10),
-                decoration: const BoxDecoration(
-                  color: Colors.blue,
+                decoration: BoxDecoration(
+                  color: colors.adaptiveColor(
+                    light: Colors.blue,
+                    dark: colors.primary,
+                  ),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.send_rounded,
-                  color: Colors.white,
+                  color: colors.adaptiveColor(
+                    light: Colors.white,
+                    dark: colors.onPrimary,
+                  ),
                   size: 18,
                 ),
               ),
@@ -155,12 +188,20 @@ class _VoiceRecorderWidgetState extends State<VoiceRecorderWidget> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(
+          color: colors.adaptiveColor(
+            light: Colors.grey.shade200,
+            dark: colors.outlineVariant,
+          ),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: colors.adaptiveColor(
+              light: const Color(0x0A000000),
+              dark: colors.shadow.withValues(alpha: 0.08),
+            ),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -173,7 +214,7 @@ class _VoiceRecorderWidgetState extends State<VoiceRecorderWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -181,13 +222,22 @@ class _VoiceRecorderWidgetState extends State<VoiceRecorderWidget> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: colors.adaptiveColor(
+                        light: Colors.black87,
+                        dark: colors.onSurface,
+                      ),
                     ),
                   ),
                   SizedBox(height: 2),
                   Text(
                     "Record Your answer",
-                    style: TextStyle(fontSize: 13, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: colors.adaptiveColor(
+                        light: Colors.grey,
+                        dark: colors.onSurfaceVariant,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -197,14 +247,20 @@ class _VoiceRecorderWidgetState extends State<VoiceRecorderWidget> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: colors.adaptiveColor(
+                    light: Colors.grey.shade100,
+                    dark: colors.surfaceContainerHighest,
+                  ),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Text(
+                child: Text(
                   "Ready",
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey,
+                    color: colors.adaptiveColor(
+                      light: Colors.grey,
+                      dark: colors.onSurfaceVariant,
+                    ),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -215,9 +271,17 @@ class _VoiceRecorderWidgetState extends State<VoiceRecorderWidget> {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.grey[50],
+              color: colors.adaptiveColor(
+                light: Colors.grey.shade50,
+                dark: colors.surfaceContainerLow,
+              ),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade200),
+              border: Border.all(
+                color: colors.adaptiveColor(
+                  light: Colors.grey.shade200,
+                  dark: colors.outlineVariant,
+                ),
+              ),
             ),
             child: InkWell(
               onTap: () async {
@@ -238,14 +302,24 @@ class _VoiceRecorderWidgetState extends State<VoiceRecorderWidget> {
                   Container(
                     width: 50,
                     height: 50,
-                    decoration: const BoxDecoration(
-                      color: Colors.blue,
+                    decoration: BoxDecoration(
+                      color: colors.adaptiveColor(
+                        light: Colors.blue,
+                        dark: colors.primary,
+                      ),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.mic, color: Colors.white, size: 26),
+                    child: Icon(
+                      Icons.mic,
+                      color: colors.adaptiveColor(
+                        light: Colors.white,
+                        dark: colors.onPrimary,
+                      ),
+                      size: 26,
+                    ),
                   ),
                   const SizedBox(width: 14),
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -253,13 +327,22 @@ class _VoiceRecorderWidgetState extends State<VoiceRecorderWidget> {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: colors.adaptiveColor(
+                            light: Colors.black87,
+                            dark: colors.onSurface,
+                          ),
                         ),
                       ),
                       SizedBox(height: 2),
                       Text(
                         "No recording saved yet",
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colors.adaptiveColor(
+                            light: Colors.grey,
+                            dark: colors.onSurfaceVariant,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -270,12 +353,25 @@ class _VoiceRecorderWidgetState extends State<VoiceRecorderWidget> {
           const SizedBox(height: 14),
           Row(
             children: [
-              Icon(Icons.info_outline, color: Colors.grey[500], size: 16),
+              Icon(
+                Icons.info_outline,
+                color: colors.adaptiveColor(
+                  light: Colors.grey.shade500,
+                  dark: colors.onSurfaceVariant,
+                ),
+                size: 16,
+              ),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   "Speak clearly and include the same details as the text response",
-                  style: TextStyle(fontSize: 11.5, color: Colors.grey[600]),
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    color: colors.adaptiveColor(
+                      light: Colors.grey.shade600,
+                      dark: colors.onSurfaceVariant,
+                    ),
+                  ),
                 ),
               ),
             ],

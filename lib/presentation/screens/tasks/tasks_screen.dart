@@ -3,6 +3,7 @@ import 'package:academichub/business_logic/tasks/tasks_cubit.dart';
 import 'package:academichub/data/model/tassk/task_model.dart';
 import 'package:academichub/data/repository/tasks/task_details_repository.dart';
 import 'package:academichub/presentation/screens/tasks/task_details_screen.dart';
+import 'package:academichub/presentation/theme/task_status_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,27 +29,46 @@ class _TasksscreenState extends State<Tasksscreen> {
   String _currentFilter = "All";
 
   Widget buildTaskIconContainer(String type) {
+    final colors = Theme.of(context).colorScheme;
     IconData iconData;
     Color primaryColor;
     switch (type) {
       case "Listening":
         iconData = Icons.headphones_rounded;
-        primaryColor = Colors.blue;
+        primaryColor = colors.adaptiveColor(
+          light: Colors.blue,
+          dark: colors.primary,
+        );
       case "Speaking":
         iconData = Icons.mic;
-        primaryColor = Colors.amber;
+        primaryColor = colors.adaptiveColor(
+          light: Colors.amber,
+          dark: colors.tertiary,
+        );
       case "Reading":
         iconData = Icons.menu_book_rounded;
-        primaryColor = Colors.greenAccent;
+        primaryColor = colors.adaptiveColor(
+          light: Colors.greenAccent,
+          dark: colors.secondary,
+        );
       case "Writing":
         iconData = Icons.edit;
-        primaryColor = Colors.deepPurpleAccent;
+        primaryColor = colors.adaptiveColor(
+          light: Colors.deepPurpleAccent,
+          dark: colors.primary,
+        );
       case "Pronunciation":
         iconData = Icons.record_voice_over_outlined;
-        primaryColor = Colors.redAccent;
+        primaryColor = colors.adaptiveColor(
+          light: Colors.redAccent,
+          dark: colors.error,
+        );
       default:
         iconData = Icons.task;
-        primaryColor = Colors.red;
+        primaryColor = colors.adaptiveColor(
+          light: Colors.red,
+          dark: colors.error,
+        );
     }
     return Container(
       padding: const EdgeInsets.all(10),
@@ -61,32 +81,31 @@ class _TasksscreenState extends State<Tasksscreen> {
   }
 
   Widget buildTaskIconStatus(String status) {
+    final colors = Theme.of(context).colorScheme;
     IconData iconData;
-    Color primaryColor;
     switch (status) {
       case "Done":
         iconData = Icons.done_sharp;
-        primaryColor = Colors.green;
       case "Pending":
         iconData = Icons.access_time_rounded;
-        primaryColor = Colors.amber;
       case "To Do":
+      case "Required":
         iconData = Icons.pending_actions_rounded;
-        primaryColor = Colors.red;
       default:
         iconData = Icons.multitrack_audio_rounded;
-        primaryColor = Colors.indigo;
     }
+    final statusColor = colors.taskStatusColor(status);
+
     return Container(
       height: double.infinity,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: primaryColor.withValues(alpha: 0.15),
+        color: statusColor.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         children: [
-          Icon(iconData, color: primaryColor, size: 20),
+          Icon(iconData, color: statusColor, size: 20),
           Text(status),
         ],
       ),
@@ -95,6 +114,8 @@ class _TasksscreenState extends State<Tasksscreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -112,10 +133,19 @@ class _TasksscreenState extends State<Tasksscreen> {
             ),
             Container(
               decoration: BoxDecoration(
-                color: Colors.lightBlueAccent[100],
+                color: colors.adaptiveColor(
+                  light: Colors.lightBlueAccent.shade100,
+                  dark: colors.primaryContainer,
+                ),
                 borderRadius: BorderRadius.circular(5),
               ),
-              child: const Icon(Icons.filter_list_outlined),
+              child: Icon(
+                Icons.filter_list_outlined,
+                color: colors.adaptiveColor(
+                  light: Colors.black,
+                  dark: colors.onPrimaryContainer,
+                ),
+              ),
             ),
           ],
         ),
@@ -129,7 +159,13 @@ class _TasksscreenState extends State<Tasksscreen> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      border: Border.all(width: 2, color: Colors.black12),
+                      border: Border.all(
+                        width: 2,
+                        color: colors.adaptiveColor(
+                          light: Colors.black12,
+                          dark: colors.outlineVariant,
+                        ),
+                      ),
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: Column(
@@ -165,24 +201,9 @@ class _TasksscreenState extends State<Tasksscreen> {
                                       children: events.map((event) {
                                         final task = event as TaskModel;
 
-                                        Color dotColor;
-
-                                        switch (task.status) {
-                                          case 'Done':
-                                            dotColor = Colors.green;
-                                            break;
-
-                                          case 'Pending':
-                                            dotColor = Colors.amber;
-                                            break;
-
-                                          case 'To Do':
-                                            dotColor = Colors.red;
-                                            break;
-
-                                          default:
-                                            dotColor = Colors.grey;
-                                        }
+                                        final dotColor = colors.taskStatusColor(
+                                          task.status,
+                                        );
 
                                         return Container(
                                           margin: const EdgeInsets.symmetric(
@@ -200,6 +221,53 @@ class _TasksscreenState extends State<Tasksscreen> {
                                   );
                                 },
                               ),
+                              calendarStyle:
+                                  colors.brightness == Brightness.dark
+                                  ? CalendarStyle(
+                                      defaultTextStyle: TextStyle(
+                                        color: colors.onSurface,
+                                      ),
+                                      weekendTextStyle: TextStyle(
+                                        color: colors.onSurface,
+                                      ),
+                                      outsideTextStyle: TextStyle(
+                                        color: colors.onSurfaceVariant,
+                                      ),
+                                      disabledTextStyle: TextStyle(
+                                        color: colors.onSurfaceVariant,
+                                      ),
+                                      selectedTextStyle: TextStyle(
+                                        color: colors.onPrimary,
+                                      ),
+                                      todayTextStyle: TextStyle(
+                                        color: colors.onPrimaryContainer,
+                                      ),
+                                      selectedDecoration: BoxDecoration(
+                                        color: colors.primary,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      todayDecoration: BoxDecoration(
+                                        color: colors.primaryContainer,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    )
+                                  : const CalendarStyle(),
+                              headerStyle: colors.brightness == Brightness.dark
+                                  ? HeaderStyle(
+                                      titleTextStyle: TextStyle(
+                                        color: colors.onSurface,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      leftChevronIcon: Icon(
+                                        Icons.chevron_left,
+                                        color: colors.onSurfaceVariant,
+                                      ),
+                                      rightChevronIcon: Icon(
+                                        Icons.chevron_right,
+                                        color: colors.onSurfaceVariant,
+                                      ),
+                                    )
+                                  : const HeaderStyle(),
                             );
                           },
                         ),
@@ -208,11 +276,11 @@ class _TasksscreenState extends State<Tasksscreen> {
                           children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 Text(
                                   "• ",
                                   style: TextStyle(
-                                    color: Colors.green,
+                                    color: colors.taskStatusColor("Done"),
                                     fontSize: 30,
                                   ),
                                 ),
@@ -221,11 +289,11 @@ class _TasksscreenState extends State<Tasksscreen> {
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 Text(
                                   "• ",
                                   style: TextStyle(
-                                    color: Colors.amber,
+                                    color: colors.taskStatusColor("Pending"),
                                     fontSize: 30,
                                   ),
                                 ),
@@ -234,11 +302,11 @@ class _TasksscreenState extends State<Tasksscreen> {
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 Text(
                                   "• ",
                                   style: TextStyle(
-                                    color: Colors.red,
+                                    color: colors.taskStatusColor("To Do"),
                                     fontSize: 30,
                                   ),
                                 ),
@@ -258,7 +326,15 @@ class _TasksscreenState extends State<Tasksscreen> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _currentFilter == "All"
-                                ? Colors.blue.shade100
+                                ? colors.adaptiveColor(
+                                    light: Colors.blue.shade100,
+                                    dark: colors.primaryContainer,
+                                  )
+                                : null,
+                            foregroundColor: _currentFilter == "All"
+                                ? (colors.brightness == Brightness.dark
+                                      ? colors.onPrimaryContainer
+                                      : null)
                                 : null,
                           ),
                           onPressed: () {
@@ -274,7 +350,15 @@ class _TasksscreenState extends State<Tasksscreen> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _currentFilter == "Pending"
-                                ? Colors.blue.shade100
+                                ? colors.adaptiveColor(
+                                    light: Colors.blue.shade100,
+                                    dark: colors.primaryContainer,
+                                  )
+                                : null,
+                            foregroundColor: _currentFilter == "Pending"
+                                ? (colors.brightness == Brightness.dark
+                                      ? colors.onPrimaryContainer
+                                      : null)
                                 : null,
                           ),
                           onPressed: () {
@@ -290,7 +374,15 @@ class _TasksscreenState extends State<Tasksscreen> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _currentFilter == "Done"
-                                ? Colors.blue.shade100
+                                ? colors.adaptiveColor(
+                                    light: Colors.blue.shade100,
+                                    dark: colors.primaryContainer,
+                                  )
+                                : null,
+                            foregroundColor: _currentFilter == "Done"
+                                ? (colors.brightness == Brightness.dark
+                                      ? colors.onPrimaryContainer
+                                      : null)
                                 : null,
                           ),
                           onPressed: () {

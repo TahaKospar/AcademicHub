@@ -8,11 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:academichub/business_logic/home/home_page_cubit.dart';
 import 'package:academichub/data/model/home/home_page_model.dart';
-
-const Color primaryBlue = Color(0xFF2563EB);
-const Color backgroundColor = Color(0xFFF8FAFC);
-const Color darkText = Color(0xFF0F172A);
-const Color secondaryText = Color(0xFF64748B);
+import 'package:academichub/presentation/theme/task_status_colors.dart';
 
 class Homescreen extends StatefulWidget {
   final Function(int)? onNavigate;
@@ -43,12 +39,19 @@ class _HomescreenState extends State<Homescreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return SafeArea(
       child: BlocBuilder<HomePageCubit, HomePageState>(
         builder: (context, state) {
           if (state is HomePageLoading || state is HomePageInitial) {
-            return const Center(
-              child: CircularProgressIndicator(color: primaryBlue),
+            return Center(
+              child: CircularProgressIndicator(
+                color: colors.adaptiveColor(
+                  light: const Color(0xFF2563EB),
+                  dark: colors.primary,
+                ),
+              ),
             );
           }
 
@@ -67,8 +70,13 @@ class _HomescreenState extends State<Homescreen> {
   }
 
   Widget _buildDashboard(HomePageModel model) {
+    final colors = Theme.of(context).colorScheme;
+
     return RefreshIndicator(
-      color: primaryBlue,
+      color: colors.adaptiveColor(
+        light: const Color(0xFF2563EB),
+        dark: colors.primary,
+      ),
       onRefresh: () async => _fetchDashboard(),
       child: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -113,9 +121,11 @@ class _HomescreenState extends State<Homescreen> {
   // Header
 
   Widget _buildHeader() {
+    final colors = Theme.of(context).colorScheme;
+
     return Row(
       children: [
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -124,7 +134,10 @@ class _HomescreenState extends State<Homescreen> {
                 style: TextStyle(
                   fontSize: 21,
                   fontWeight: FontWeight.bold,
-                  color: darkText,
+                  color: colors.adaptiveColor(
+                    light: const Color(0xFF0F172A),
+                    dark: colors.onSurface,
+                  ),
                 ),
               ),
               SizedBox(height: 3),
@@ -133,7 +146,10 @@ class _HomescreenState extends State<Homescreen> {
                 style: TextStyle(
                   fontSize: 10,
                   letterSpacing: 0.7,
-                  color: secondaryText,
+                  color: colors.adaptiveColor(
+                    light: const Color(0xFF64748B),
+                    dark: colors.onSurfaceVariant,
+                  ),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -142,14 +158,20 @@ class _HomescreenState extends State<Homescreen> {
         ),
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFFEFF6FF),
+            color: colors.adaptiveColor(
+              light: const Color(0xFFEFF6FF),
+              dark: colors.primaryContainer,
+            ),
             borderRadius: BorderRadius.circular(14),
           ),
           child: IconButton(
             onPressed: () {},
-            icon: const Icon(
+            icon: Icon(
               Icons.notifications_none_rounded,
-              color: primaryBlue,
+              color: colors.adaptiveColor(
+                light: const Color(0xFF2563EB),
+                dark: colors.onPrimaryContainer,
+              ),
               size: 25,
             ),
           ),
@@ -161,20 +183,28 @@ class _HomescreenState extends State<Homescreen> {
   // Welcome
 
   Widget _buildWelcome(HomePageModel model) {
+    final colors = Theme.of(context).colorScheme;
+
     return Row(
       children: [
         Container(
           width: 52,
           height: 52,
           decoration: BoxDecoration(
-            color: const Color(0xFFDBEAFE),
+            color: colors.adaptiveColor(
+              light: const Color(0xFFDBEAFE),
+              dark: colors.primaryContainer,
+            ),
             borderRadius: BorderRadius.circular(17),
           ),
           alignment: Alignment.center,
           child: Text(
             model.userInitial,
-            style: const TextStyle(
-              color: primaryBlue,
+            style: TextStyle(
+              color: colors.adaptiveColor(
+                light: const Color(0xFF2563EB),
+                dark: colors.onPrimaryContainer,
+              ),
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -185,19 +215,28 @@ class _HomescreenState extends State<Homescreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Welcome back,',
-                style: TextStyle(color: secondaryText, fontSize: 13),
+                style: TextStyle(
+                  color: colors.adaptiveColor(
+                    light: const Color(0xFF64748B),
+                    dark: colors.onSurfaceVariant,
+                  ),
+                  fontSize: 13,
+                ),
               ),
               const SizedBox(height: 3),
               Text(
                 model.userName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: darkText,
+                  color: colors.adaptiveColor(
+                    light: const Color(0xFF0F172A),
+                    dark: colors.onSurface,
+                  ),
                 ),
               ),
             ],
@@ -210,6 +249,7 @@ class _HomescreenState extends State<Homescreen> {
   // Progress
 
   Widget _buildProgressCard(HomePageModel model) {
+    final colors = Theme.of(context).colorScheme;
     final progress = model.overallProgress.clamp(0.0, 1.0).toDouble();
 
     const sectionOrder = [
@@ -226,20 +266,26 @@ class _HomescreenState extends State<Homescreen> {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Your Progress',
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
-                    color: darkText,
+                    color: colors.adaptiveColor(
+                      light: const Color(0xFF0F172A),
+                      dark: colors.onSurface,
+                    ),
                   ),
                 ),
               ),
               Text(
                 '${(progress * 100).round()}%',
-                style: const TextStyle(
-                  color: primaryBlue,
+                style: TextStyle(
+                  color: colors.adaptiveColor(
+                    light: const Color(0xFF2563EB),
+                    dark: colors.primary,
+                  ),
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
@@ -256,22 +302,37 @@ class _HomescreenState extends State<Homescreen> {
                 animation: true,
                 animationDuration: 900,
                 circularStrokeCap: CircularStrokeCap.round,
-                backgroundColor: const Color(0xFFEFF6FF),
-                progressColor: primaryBlue,
+                backgroundColor: colors.adaptiveColor(
+                  light: const Color(0xFFEFF6FF),
+                  dark: colors.primaryContainer,
+                ),
+                progressColor: colors.adaptiveColor(
+                  light: const Color(0xFF2563EB),
+                  dark: colors.primary,
+                ),
                 center: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       '${(progress * 100).round()}%',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.bold,
-                        color: darkText,
+                        color: colors.adaptiveColor(
+                          light: const Color(0xFF0F172A),
+                          dark: colors.onSurface,
+                        ),
                       ),
                     ),
-                    const Text(
+                    Text(
                       'Overall',
-                      style: TextStyle(fontSize: 10, color: secondaryText),
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: colors.adaptiveColor(
+                          light: const Color(0xFF64748B),
+                          dark: colors.onSurfaceVariant,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -296,6 +357,7 @@ class _HomescreenState extends State<Homescreen> {
   }
 
   Widget _buildSectionProgress(String title, double value) {
+    final colors = Theme.of(context).colorScheme;
     final progress = value.clamp(0.0, 1.0).toDouble();
 
     return Column(
@@ -306,19 +368,25 @@ class _HomescreenState extends State<Homescreen> {
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 11,
-                  color: secondaryText,
+                  color: colors.adaptiveColor(
+                    light: const Color(0xFF64748B),
+                    dark: colors.onSurfaceVariant,
+                  ),
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ),
             Text(
               '${(progress * 100).round()}%',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: darkText,
+                color: colors.adaptiveColor(
+                  light: const Color(0xFF0F172A),
+                  dark: colors.onSurface,
+                ),
               ),
             ),
           ],
@@ -328,8 +396,14 @@ class _HomescreenState extends State<Homescreen> {
           lineHeight: 6,
           percent: progress,
           padding: EdgeInsets.zero,
-          backgroundColor: const Color(0xFFEFF6FF),
-          progressColor: primaryBlue,
+          backgroundColor: colors.adaptiveColor(
+            light: const Color(0xFFEFF6FF),
+            dark: colors.primaryContainer,
+          ),
+          progressColor: colors.adaptiveColor(
+            light: const Color(0xFF2563EB),
+            dark: colors.primary,
+          ),
           barRadius: const Radius.circular(10),
           animation: true,
           animationDuration: 900,
@@ -341,17 +415,32 @@ class _HomescreenState extends State<Homescreen> {
   // Active Course
 
   Widget _buildActiveCourse(CourseModel? course) {
+    final colors = Theme.of(context).colorScheme;
+
     if (course == null) {
       return _card(
-        child: const Padding(
-          padding: EdgeInsets.symmetric(vertical: 15),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15),
           child: Column(
             children: [
-              Icon(Icons.menu_book_outlined, size: 30, color: secondaryText),
+              Icon(
+                Icons.menu_book_outlined,
+                size: 30,
+                color: colors.adaptiveColor(
+                  light: const Color(0xFF64748B),
+                  dark: colors.onSurfaceVariant,
+                ),
+              ),
               SizedBox(height: 9),
               Text(
                 'No active course at the moment',
-                style: TextStyle(color: secondaryText, fontSize: 13),
+                style: TextStyle(
+                  color: colors.adaptiveColor(
+                    light: const Color(0xFF64748B),
+                    dark: colors.onSurfaceVariant,
+                  ),
+                  fontSize: 13,
+                ),
               ),
             ],
           ),
@@ -369,12 +458,18 @@ class _HomescreenState extends State<Homescreen> {
                 width: 45,
                 height: 45,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEFF6FF),
+                  color: colors.adaptiveColor(
+                    light: const Color(0xFFEFF6FF),
+                    dark: colors.primaryContainer,
+                  ),
                   borderRadius: BorderRadius.circular(13),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.menu_book_rounded,
-                  color: primaryBlue,
+                  color: colors.adaptiveColor(
+                    light: const Color(0xFF2563EB),
+                    dark: colors.onPrimaryContainer,
+                  ),
                   size: 23,
                 ),
               ),
@@ -387,10 +482,13 @@ class _HomescreenState extends State<Homescreen> {
                       course.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: darkText,
+                        color: colors.adaptiveColor(
+                          light: const Color(0xFF0F172A),
+                          dark: colors.onSurface,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -398,9 +496,12 @@ class _HomescreenState extends State<Homescreen> {
                       course.instructor.isEmpty
                           ? 'Instructor not assigned'
                           : course.instructor,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: secondaryText,
+                        color: colors.adaptiveColor(
+                          light: const Color(0xFF64748B),
+                          dark: colors.onSurfaceVariant,
+                        ),
                       ),
                     ),
                   ],
@@ -409,7 +510,12 @@ class _HomescreenState extends State<Homescreen> {
             ],
           ),
           const SizedBox(height: 18),
-          const Divider(color: Color(0xFFF1F5F9)),
+          Divider(
+            color: colors.adaptiveColor(
+              light: const Color(0xFFF1F5F9),
+              dark: colors.outlineVariant,
+            ),
+          ),
           const SizedBox(height: 12),
           if (course.schedule.trim().isNotEmpty)
             _courseInfoRow(
@@ -426,9 +532,15 @@ class _HomescreenState extends State<Homescreen> {
             ),
           ],
           if (course.schedule.trim().isEmpty && course.details.trim().isEmpty)
-            const Text(
+            Text(
               'No additional course information yet.',
-              style: TextStyle(color: secondaryText, fontSize: 12),
+              style: TextStyle(
+                color: colors.adaptiveColor(
+                  light: const Color(0xFF64748B),
+                  dark: colors.onSurfaceVariant,
+                ),
+                fontSize: 12,
+              ),
             ),
         ],
       ),
@@ -436,10 +548,19 @@ class _HomescreenState extends State<Homescreen> {
   }
 
   Widget _courseInfoRow(IconData icon, String title, String value) {
+    final colors = Theme.of(context).colorScheme;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 19, color: primaryBlue),
+        Icon(
+          icon,
+          size: 19,
+          color: colors.adaptiveColor(
+            light: const Color(0xFF2563EB),
+            dark: colors.primary,
+          ),
+        ),
         const SizedBox(width: 10),
         Expanded(
           child: Column(
@@ -447,19 +568,25 @@ class _HomescreenState extends State<Homescreen> {
             children: [
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: darkText,
+                  color: colors.adaptiveColor(
+                    light: const Color(0xFF0F172A),
+                    dark: colors.onSurface,
+                  ),
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   height: 1.5,
-                  color: secondaryText,
+                  color: colors.adaptiveColor(
+                    light: const Color(0xFF64748B),
+                    dark: colors.onSurfaceVariant,
+                  ),
                 ),
               ),
             ],
@@ -472,18 +599,37 @@ class _HomescreenState extends State<Homescreen> {
   // To-Do Tasks
 
   Widget _buildTasks(List<TaskSummaryModel> tasks) {
+    final colors = Theme.of(context).colorScheme;
+    final taskStatusColor = colors.adaptiveColor(
+      light: const Color(0xFFF59E0B),
+      dark: colors.taskStatusColor('To Do'),
+    );
+
     if (tasks.isEmpty) {
       return Center(
         child: _card(
-          child: const Padding(
-            padding: EdgeInsets.symmetric(vertical: 15),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 15),
             child: Column(
               children: [
-                Icon(Icons.task_alt_rounded, color: Colors.green, size: 30),
+                Icon(
+                  Icons.task_alt_rounded,
+                  color: colors.adaptiveColor(
+                    light: Colors.green,
+                    dark: colors.tertiary,
+                  ),
+                  size: 30,
+                ),
                 SizedBox(height: 9),
                 Text(
                   'You have no tasks to do',
-                  style: TextStyle(color: secondaryText, fontSize: 13),
+                  style: TextStyle(
+                    color: colors.adaptiveColor(
+                      light: const Color(0xFF64748B),
+                      dark: colors.onSurfaceVariant,
+                    ),
+                    fontSize: 13,
+                  ),
                 ),
               ],
             ),
@@ -504,12 +650,12 @@ class _HomescreenState extends State<Homescreen> {
                     width: 42,
                     height: 42,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFF7ED),
+                      color: taskStatusColor.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.assignment_outlined,
-                      color: Color(0xFFF59E0B),
+                      color: taskStatusColor,
                       size: 21,
                     ),
                   ),
@@ -534,8 +680,11 @@ class _HomescreenState extends State<Homescreen> {
                             task.title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: darkText,
+                            style: TextStyle(
+                              color: colors.adaptiveColor(
+                                light: const Color(0xFF0F172A),
+                                dark: colors.onSurface,
+                              ),
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -545,8 +694,11 @@ class _HomescreenState extends State<Homescreen> {
                             task.time.isEmpty
                                 ? task.type
                                 : '${task.id} • ${task.type} • ${task.time}',
-                            style: const TextStyle(
-                              color: secondaryText,
+                            style: TextStyle(
+                              color: colors.adaptiveColor(
+                                light: const Color(0xFF64748B),
+                                dark: colors.onSurfaceVariant,
+                              ),
                               fontSize: 11,
                             ),
                           ),
@@ -561,13 +713,13 @@ class _HomescreenState extends State<Homescreen> {
                       vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFF7ED),
+                      color: taskStatusColor.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Text(
+                    child: Text(
                       'To Do',
                       style: TextStyle(
-                        color: Color(0xFFD97706),
+                        color: taskStatusColor,
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                       ),
@@ -621,18 +773,30 @@ class _HomescreenState extends State<Homescreen> {
   }
 
   Widget _destinationItem(IconData icon, String title) {
+    final colors = Theme.of(context).colorScheme;
+
     return _card(
       padding: const EdgeInsets.symmetric(vertical: 17, horizontal: 5),
       child: Column(
         children: [
-          Icon(icon, color: primaryBlue, size: 24),
+          Icon(
+            icon,
+            color: colors.adaptiveColor(
+              light: const Color(0xFF2563EB),
+              dark: colors.primary,
+            ),
+            size: 24,
+          ),
           const SizedBox(height: 9),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
-              color: darkText,
+              color: colors.adaptiveColor(
+                light: const Color(0xFF0F172A),
+                dark: colors.onSurface,
+              ),
             ),
           ),
         ],
@@ -643,21 +807,32 @@ class _HomescreenState extends State<Homescreen> {
   // Section Header
 
   Widget _buildSectionHeader(String title, String subtitle) {
+    final colors = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.bold,
-            color: darkText,
+            color: colors.adaptiveColor(
+              light: const Color(0xFF0F172A),
+              dark: colors.onSurface,
+            ),
           ),
         ),
         const SizedBox(height: 4),
         Text(
           subtitle,
-          style: const TextStyle(fontSize: 11, color: secondaryText),
+          style: TextStyle(
+            fontSize: 11,
+            color: colors.adaptiveColor(
+              light: const Color(0xFF64748B),
+              dark: colors.onSurfaceVariant,
+            ),
+          ),
         ),
       ],
     );
@@ -669,16 +844,27 @@ class _HomescreenState extends State<Homescreen> {
     required Widget child,
     EdgeInsetsGeometry padding = const EdgeInsets.all(16),
   }) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Container(
       width: double.infinity,
       padding: padding,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFF1F5F9)),
+        border: Border.all(
+          color: colors.adaptiveColor(
+            light: const Color(0xFFF1F5F9),
+            dark: colors.outlineVariant,
+          ),
+        ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0F172A).withOpacity(0.025),
+            color: colors.adaptiveColor(
+              light: const Color(0xFF0F172A).withValues(alpha: 0.025),
+              dark: colors.shadow.withValues(alpha: 0.08),
+            ),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -691,31 +877,44 @@ class _HomescreenState extends State<Homescreen> {
   // Error
 
   Widget _buildError(String message) {
+    final colors = Theme.of(context).colorScheme;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(25),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline_rounded,
-              color: Colors.redAccent,
+              color: colors.adaptiveColor(
+                light: Colors.redAccent,
+                dark: colors.error,
+              ),
               size: 45,
             ),
             const SizedBox(height: 12),
-            const Text(
+            Text(
               'Something went wrong',
               style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
-                color: darkText,
+                color: colors.adaptiveColor(
+                  light: const Color(0xFF0F172A),
+                  dark: colors.onSurface,
+                ),
               ),
             ),
             const SizedBox(height: 8),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: secondaryText),
+              style: TextStyle(
+                color: colors.adaptiveColor(
+                  light: const Color(0xFF64748B),
+                  dark: colors.onSurfaceVariant,
+                ),
+              ),
             ),
             const SizedBox(height: 18),
             ElevatedButton(

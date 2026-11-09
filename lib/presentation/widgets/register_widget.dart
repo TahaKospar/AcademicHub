@@ -1,5 +1,6 @@
 import 'package:academichub/constants/strings/strings.dart';
 import 'package:academichub/presentation/widgets/text_field.dart';
+import 'package:academichub/presentation/theme/task_status_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,6 +32,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final med = mediaQuery.size.width;
+    final colors = Theme.of(context).colorScheme;
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -39,18 +42,27 @@ class _RegisterWidgetState extends State<RegisterWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 "Welcome to AcademicHub! 👋",
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: colors.adaptiveColor(
+                    light: Colors.black87,
+                    dark: colors.onSurface,
+                  ),
                 ),
               ),
               const SizedBox(height: 6),
-              const Text(
+              Text(
                 "Register to continue exploring AcademicHub",
-                style: TextStyle(color: Colors.grey, fontSize: 14),
+                style: TextStyle(
+                  color: colors.adaptiveColor(
+                    light: Colors.grey,
+                    dark: colors.onSurfaceVariant,
+                  ),
+                  fontSize: 14,
+                ),
               ),
               const SizedBox(height: 20),
 
@@ -98,7 +110,10 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                           "Email Registered",
                           textAlign: TextAlign.center,
                         ),
-                        backgroundColor: Colors.grey,
+                        backgroundColor: colors.adaptiveColor(
+                          light: Colors.grey,
+                          dark: colors.inverseSurface,
+                        ),
                         duration: Duration(seconds: 2),
                         behavior: SnackBarBehavior.floating,
                       ),
@@ -113,7 +128,10 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                           state.errorMessage,
                           textAlign: TextAlign.center,
                         ),
-                        backgroundColor: Colors.grey,
+                        backgroundColor: colors.adaptiveColor(
+                          light: Colors.grey,
+                          dark: colors.inverseSurface,
+                        ),
                         duration: Duration(seconds: 2),
                         behavior: SnackBarBehavior.floating,
                       ),
@@ -123,7 +141,12 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                 builder: (context, state) {
                   if (state is AuthLoadingState) {
                     return Center(
-                      child: CircularProgressIndicator(color: Colors.white),
+                      child: CircularProgressIndicator(
+                        color: colors.adaptiveColor(
+                          light: Colors.white,
+                          dark: colors.primary,
+                        ),
+                      ),
                     );
                   }
                   return SizedBox(
@@ -131,7 +154,14 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     height: 55,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue[900],
+                        backgroundColor: colors.adaptiveColor(
+                          light: Colors.blue.shade900,
+                          dark: colors.primary,
+                        ),
+                        foregroundColor: colors.adaptiveColor(
+                          light: Colors.white,
+                          dark: colors.onPrimary,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
@@ -147,7 +177,10 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                   "Password don't match",
                                   textAlign: TextAlign.center,
                                 ),
-                                backgroundColor: Colors.grey,
+                                backgroundColor: colors.adaptiveColor(
+                                  light: Colors.grey,
+                                  dark: colors.inverseSurface,
+                                ),
                                 duration: Duration(seconds: 2),
                                 behavior: SnackBarBehavior.floating,
                               ),
@@ -163,12 +196,15 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                           }
                         }
                       },
-                      child: const Text(
+                      child: Text(
                         "Register",
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: colors.adaptiveColor(
+                            light: Colors.white,
+                            dark: colors.onPrimary,
+                          ),
                         ),
                       ),
                     ),

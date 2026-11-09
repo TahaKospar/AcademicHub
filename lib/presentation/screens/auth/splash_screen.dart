@@ -1,4 +1,5 @@
 import 'package:academichub/constants/strings/strings.dart';
+import 'package:academichub/presentation/theme/task_status_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,8 +39,13 @@ class _SplashscreenState extends State<Splashscreen> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colors.adaptiveColor(
+        light: Colors.white,
+        dark: colors.surfaceDim,
+      ),
       body: SizedBox(
         width: screenSize.width,
         height: screenSize.height,
@@ -56,7 +62,10 @@ class _SplashscreenState extends State<Splashscreen> {
                   Text(
                     "Academic",
                     style: TextStyle(
-                      color: Colors.black,
+                      color: colors.adaptiveColor(
+                        light: Colors.black,
+                        dark: colors.onSurface,
+                      ),
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
                     ),
@@ -74,7 +83,10 @@ class _SplashscreenState extends State<Splashscreen> {
               Text(
                 "Your Campus Journey In One Place",
                 style: TextStyle(
-                  color: Colors.black,
+                  color: colors.adaptiveColor(
+                    light: Colors.black,
+                    dark: colors.onSurface,
+                  ),
                   fontWeight: FontWeight.w500,
                 ),
               ),

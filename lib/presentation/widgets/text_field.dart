@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:academichub/presentation/theme/task_status_colors.dart';
 
 class Textfield extends StatefulWidget {
   final String? hintText;
@@ -28,6 +29,8 @@ class _TextfieldState extends State<Textfield> {
   bool _obscure = true;
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return TextFormField(
       validator: (val) {
         if (val!.isEmpty) {
@@ -52,8 +55,14 @@ class _TextfieldState extends State<Textfield> {
               )
             : null,
         prefixIcon: widget.prefixIcon,
-        fillColor: Colors.grey[300],
+        fillColor: colors.adaptiveColor(
+          light: Colors.grey.shade300,
+          dark: colors.surfaceContainerHighest,
+        ),
         hintText: "${widget.hintText}",
+        hintStyle: colors.brightness == Brightness.dark
+            ? TextStyle(color: colors.onSurfaceVariant)
+            : null,
         labelText: "${widget.labelText}",
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
       ),

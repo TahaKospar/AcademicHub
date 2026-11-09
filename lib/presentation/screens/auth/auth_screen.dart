@@ -3,6 +3,7 @@ import 'package:academichub/data/repository/auth/auth_repository.dart';
 import 'package:academichub/data/services/auth/authService.dart';
 import 'package:academichub/presentation/widgets/login_widget.dart';
 import 'package:academichub/presentation/widgets/register_widget.dart';
+import 'package:academichub/presentation/theme/task_status_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,11 +26,16 @@ class _AuthscreenState extends State<Authscreen> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final med = mediaQuery.size.width;
+    final colors = Theme.of(context).colorScheme;
+
     return BlocProvider(
       create: (context) => AuthCubit(AuthRepository(AuthServices())),
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: colors.adaptiveColor(
+            light: Colors.white,
+            dark: colors.surface,
+          ),
           centerTitle: true,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -47,7 +53,10 @@ class _AuthscreenState extends State<Authscreen> {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: med * .05,
-                  color: Colors.blue[900],
+                  color: colors.adaptiveColor(
+                    light: Colors.blue.shade900,
+                    dark: colors.primary,
+                  ),
                 ),
               ),
             ],
@@ -87,7 +96,10 @@ class _AuthscreenState extends State<Authscreen> {
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.symmetric(vertical: 12),
                             backgroundColor: _currentPage == 0
-                                ? Colors.blue[900]
+                                ? colors.adaptiveColor(
+                                    light: Colors.blue.shade900,
+                                    dark: colors.primary,
+                                  )
                                 : Colors.transparent,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -104,8 +116,14 @@ class _AuthscreenState extends State<Authscreen> {
                             "Login",
                             style: TextStyle(
                               color: _currentPage == 0
-                                  ? Colors.white
-                                  : Colors.black54,
+                                  ? colors.adaptiveColor(
+                                      light: Colors.white,
+                                      dark: colors.onPrimary,
+                                    )
+                                  : colors.adaptiveColor(
+                                      light: Colors.black54,
+                                      dark: colors.onSurfaceVariant,
+                                    ),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -117,7 +135,10 @@ class _AuthscreenState extends State<Authscreen> {
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.symmetric(vertical: 12),
                             backgroundColor: _currentPage == 1
-                                ? Colors.blue[900]
+                                ? colors.adaptiveColor(
+                                    light: Colors.blue.shade900,
+                                    dark: colors.primary,
+                                  )
                                 : Colors.transparent,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -134,8 +155,14 @@ class _AuthscreenState extends State<Authscreen> {
                             "Register",
                             style: TextStyle(
                               color: _currentPage == 1
-                                  ? Colors.white
-                                  : Colors.black54,
+                                  ? colors.adaptiveColor(
+                                      light: Colors.white,
+                                      dark: colors.onPrimary,
+                                    )
+                                  : colors.adaptiveColor(
+                                      light: Colors.black54,
+                                      dark: colors.onSurfaceVariant,
+                                    ),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -150,7 +177,10 @@ class _AuthscreenState extends State<Authscreen> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: Container(
-                    color: const Color.fromRGBO(238, 238, 238, 1),
+                    color: colors.adaptiveColor(
+                      light: const Color.fromRGBO(238, 238, 238, 1),
+                      dark: colors.surfaceContainerHighest,
+                    ),
                     child: PageView(
                       controller: _controller,
                       onPageChanged: (index) {

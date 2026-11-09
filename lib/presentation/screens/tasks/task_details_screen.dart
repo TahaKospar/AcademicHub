@@ -3,6 +3,7 @@ import 'package:academichub/business_logic/tasks/task_details_cubit.dart';
 import 'package:academichub/business_logic/tasks/task_details_state.dart';
 import 'package:academichub/presentation/widgets/voice_paly.dart';
 import 'package:academichub/presentation/widgets/voice_recorder_widget.dart';
+import 'package:academichub/presentation/theme/task_status_colors.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -122,6 +123,7 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
   }
 
   Widget _buildModernSubmissionTracker(String status) {
+    final colors = Theme.of(context).colorScheme;
     final currentStatus = status.toLowerCase();
 
     int activeStep = 0;
@@ -135,12 +137,20 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(
+          color: colors.adaptiveColor(
+            light: Colors.grey.shade200,
+            dark: colors.outlineVariant,
+          ),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.shade100,
+            color: colors.adaptiveColor(
+              light: Colors.grey.shade100,
+              dark: colors.shadow.withValues(alpha: 0.08),
+            ),
             blurRadius: 8,
             spreadRadius: 2,
             offset: const Offset(0, 4),
@@ -177,6 +187,12 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
     required bool isDone,
     required bool isCurrent,
   }) {
+    final colors = Theme.of(context).colorScheme;
+    final stepColor = colors.adaptiveColor(
+      light: Colors.blue,
+      dark: colors.taskStatusColor(title),
+    );
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -185,21 +201,41 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
           height: 32,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isDone ? Colors.blue : Colors.grey.shade100,
+            color: isDone
+                ? stepColor
+                : colors.adaptiveColor(
+                    light: Colors.grey.shade100,
+                    dark: colors.surfaceContainerHighest,
+                  ),
             border: Border.all(
-              color: isCurrent
-                  ? Colors.blue
-                  : (isDone ? Colors.blue : Colors.grey.shade300),
+              color: isCurrent || isDone
+                  ? stepColor
+                  : colors.adaptiveColor(
+                      light: Colors.grey.shade300,
+                      dark: colors.outlineVariant,
+                    ),
               width: isCurrent ? 2 : 1,
             ),
           ),
           child: Center(
             child: isDone
-                ? const Icon(Icons.check, size: 16, color: Colors.white)
+                ? Icon(
+                    Icons.check,
+                    size: 16,
+                    color: colors.adaptiveColor(
+                      light: Colors.white,
+                      dark: colors.onPrimary,
+                    ),
+                  )
                 : Text(
                     title[0],
                     style: TextStyle(
-                      color: isCurrent ? Colors.blue : Colors.grey.shade500,
+                      color: isCurrent
+                          ? stepColor
+                          : colors.adaptiveColor(
+                              light: Colors.grey.shade500,
+                              dark: colors.onSurfaceVariant,
+                            ),
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -213,8 +249,11 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
             fontSize: 12,
             fontWeight: isCurrent || isDone ? FontWeight.bold : FontWeight.w500,
             color: isCurrent || isDone
-                ? Colors.blue.shade800
-                : Colors.grey.shade500,
+                ? stepColor
+                : colors.adaptiveColor(
+                    light: Colors.grey.shade500,
+                    dark: colors.onSurfaceVariant,
+                  ),
           ),
         ),
       ],
@@ -222,10 +261,17 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
   }
 
   Widget _trackerConnector({required bool isDone}) {
+    final colors = Theme.of(context).colorScheme;
+
     return Expanded(
       child: Container(
         height: 2,
-        color: isDone ? Colors.blue : Colors.grey.shade300,
+        color: isDone
+            ? colors.adaptiveColor(light: Colors.blue, dark: colors.primary)
+            : colors.adaptiveColor(
+                light: Colors.grey.shade300,
+                dark: colors.outlineVariant,
+              ),
         margin: const EdgeInsets.symmetric(horizontal: 4),
       ),
     );
@@ -233,12 +279,23 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: colors.adaptiveColor(
+        light: Colors.grey.shade50,
+        dark: colors.surfaceDim,
+      ),
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: colors.adaptiveColor(
+          light: Colors.white,
+          dark: colors.surface,
+        ),
+        foregroundColor: colors.adaptiveColor(
+          light: Colors.black,
+          dark: colors.onSurface,
+        ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -254,7 +311,10 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
                     fontSize: 12,
-                    color: Colors.grey.shade600,
+                    color: colors.adaptiveColor(
+                      light: Colors.grey.shade600,
+                      dark: colors.onSurfaceVariant,
+                    ),
                   ),
                 ),
               ],
@@ -271,7 +331,12 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
             return Center(
               child: Text(
                 state.errorMessage,
-                style: const TextStyle(color: Colors.red),
+                style: TextStyle(
+                  color: colors.adaptiveColor(
+                    light: Colors.red,
+                    dark: colors.error,
+                  ),
+                ),
               ),
             );
           }
@@ -301,13 +366,18 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.amber.shade100,
+                      color: colors.adaptiveColor(
+                        light: Colors.amber.shade100,
+                        dark: colors
+                            .taskStatusColor(details.status)
+                            .withValues(alpha: 0.15),
+                      ),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       "${details.status} • ${details.type}",
                       style: TextStyle(
-                        color: Colors.amber.shade900,
+                        color: colors.taskStatusColor(details.status),
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
                       ),
@@ -316,10 +386,13 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                   const SizedBox(height: 12),
                   SelectableText(
                     details.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
-                      color: Colors.black87,
+                      color: colors.adaptiveColor(
+                        light: Colors.black87,
+                        dark: colors.onSurface,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 15),
@@ -333,8 +406,14 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.grey.shade300, width: 1),
+                      color: Theme.of(context).cardColor,
+                      border: Border.all(
+                        color: colors.adaptiveColor(
+                          light: Colors.grey.shade300,
+                          dark: colors.outlineVariant,
+                        ),
+                        width: 1,
+                      ),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Column(
@@ -346,11 +425,17 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                               height: 35,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
-                                color: Colors.grey[200],
+                                color: colors.adaptiveColor(
+                                  light: Colors.grey.shade200,
+                                  dark: colors.surfaceContainerHighest,
+                                ),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.menu_book_sharp,
-                                color: Colors.blue,
+                                color: colors.adaptiveColor(
+                                  light: Colors.blue,
+                                  dark: colors.primary,
+                                ),
                               ),
                             ),
                             const Text(
@@ -387,15 +472,21 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                                     children: [
                                       TextSpan(
                                         text: "$beforeColon:",
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.black87,
+                                          color: colors.adaptiveColor(
+                                            light: Colors.black87,
+                                            dark: colors.onSurface,
+                                          ),
                                         ),
                                       ),
                                       TextSpan(
                                         text: "$afterColon\n",
                                         style: TextStyle(
-                                          color: Colors.grey.shade800,
+                                          color: colors.adaptiveColor(
+                                            light: Colors.grey.shade800,
+                                            dark: colors.onSurface,
+                                          ),
                                           height: 1.5,
                                         ),
                                       ),
@@ -407,7 +498,10 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                               return TextSpan(
                                 text: "$line\n",
                                 style: TextStyle(
-                                  color: Colors.grey.shade800,
+                                  color: colors.adaptiveColor(
+                                    light: Colors.grey.shade800,
+                                    dark: colors.onSurface,
+                                  ),
                                   height: 1.5,
                                 ),
                               );
@@ -456,7 +550,10 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                               },
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: Colors.grey[100],
+                                fillColor: colors.adaptiveColor(
+                                  light: Colors.grey.shade100,
+                                  dark: colors.surfaceContainerHighest,
+                                ),
                                 hintText: "Write your answer here...",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15),
@@ -473,19 +570,28 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: Colors.green.shade50,
+                                  color: colors.adaptiveColor(
+                                    light: Colors.green.shade50,
+                                    dark: colors.tertiaryContainer,
+                                  ),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                    color: Colors.green.shade200,
+                                    color: colors.adaptiveColor(
+                                      light: Colors.green.shade200,
+                                      dark: colors.tertiary,
+                                    ),
                                   ),
                                 ),
                                 child: Column(
                                   children: [
                                     Row(
                                       children: [
-                                        const Icon(
+                                        Icon(
                                           Icons.check_circle,
-                                          color: Colors.green,
+                                          color: colors.adaptiveColor(
+                                            light: Colors.green,
+                                            dark: colors.tertiary,
+                                          ),
                                         ),
                                         const SizedBox(width: 8),
                                         const Expanded(
@@ -519,9 +625,17 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                             Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: Colors.blue.shade50,
+                                color: colors.adaptiveColor(
+                                  light: Colors.blue.shade50,
+                                  dark: colors.primaryContainer,
+                                ),
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.blue.shade200),
+                                border: Border.all(
+                                  color: colors.adaptiveColor(
+                                    light: Colors.blue.shade200,
+                                    dark: colors.primary.withValues(alpha: 0.3),
+                                  ),
+                                ),
                               ),
                               child: Row(
                                 children: [
@@ -530,7 +644,10 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                                       isAudioPlayingLocally
                                           ? Icons.pause_circle
                                           : Icons.play_circle,
-                                      color: Colors.blue,
+                                      color: colors.adaptiveColor(
+                                        light: Colors.blue,
+                                        dark: colors.primary,
+                                      ),
                                       size: 36,
                                     ),
                                     onPressed: () async {
@@ -569,9 +686,12 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                                     ),
                                   ),
                                   IconButton(
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.delete,
-                                      color: Colors.red,
+                                      color: colors.adaptiveColor(
+                                        light: Colors.red,
+                                        dark: colors.error,
+                                      ),
                                     ),
                                     onPressed: () {
                                       setState(() {
@@ -614,8 +734,14 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                           horizontal: 50,
                           vertical: 15,
                         ),
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
+                        backgroundColor: colors.adaptiveColor(
+                          light: Colors.blue,
+                          dark: colors.primary,
+                        ),
+                        foregroundColor: colors.adaptiveColor(
+                          light: Colors.white,
+                          dark: colors.onPrimary,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -661,11 +787,14 @@ class _TaskdetailsscreenState extends State<Taskdetailsscreen> {
                               }
                             },
                       child: isSubmitting
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 24,
                               height: 24,
                               child: CircularProgressIndicator(
-                                color: Colors.white,
+                                color: colors.adaptiveColor(
+                                  light: Colors.white,
+                                  dark: colors.onPrimary,
+                                ),
                                 strokeWidth: 2.5,
                               ),
                             )

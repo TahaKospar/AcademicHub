@@ -2,6 +2,7 @@ import 'package:academichub/business_logic/home/home_page_cubit.dart';
 import 'package:academichub/presentation/screens/chat/chatScreen.dart';
 import 'package:academichub/presentation/screens/home/home_screen.dart';
 import 'package:academichub/presentation/screens/tasks/tasks_screen.dart';
+import 'package:academichub/presentation/theme/task_status_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -101,6 +102,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -114,8 +117,14 @@ class _MainScreenState extends State<MainScreen> {
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.grey,
+          selectedItemColor: colors.adaptiveColor(
+            light: Colors.blue,
+            dark: colors.primary,
+          ),
+          unselectedItemColor: colors.adaptiveColor(
+            light: Colors.grey,
+            dark: colors.onSurfaceVariant,
+          ),
           onTap: (index) {
             if (index == _currentIndex) {
               _navigatorKeys[index].currentState?.popUntil(

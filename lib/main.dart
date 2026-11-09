@@ -61,6 +61,43 @@ class AcademicHub extends StatelessWidget {
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
+          final darkColorScheme =
+              ColorScheme.fromSeed(
+                seedColor: Colors.blue,
+                brightness: Brightness.dark,
+              ).copyWith(
+                primary: const Color(0xFF7CB7FF),
+                onPrimary: const Color(0xFF101827),
+                primaryContainer: const Color(0xFF233B59),
+                onPrimaryContainer: const Color(0xFFD8E9FC),
+                secondary: const Color(0xFFFFC36B),
+                onSecondary: const Color(0xFF30230F),
+                secondaryContainer: const Color(0xFF493820),
+                onSecondaryContainer: const Color(0xFFFFE1B0),
+                tertiary: const Color(0xFF75D69A),
+                onTertiary: const Color(0xFF10281A),
+                tertiaryContainer: const Color(0xFF214432),
+                onTertiaryContainer: const Color(0xFFC5F4D6),
+                error: const Color(0xFFFF7B82),
+                onError: const Color(0xFF301719),
+                errorContainer: const Color(0xFF542A31),
+                onErrorContainer: const Color(0xFFFFDADD),
+                surface: const Color(0xFF182235),
+                onSurface: const Color(0xFFE8EEF7),
+                onSurfaceVariant: const Color(0xFFAAB7C8),
+                surfaceDim: const Color(0xFF101827),
+                surfaceBright: const Color(0xFF26354B),
+                surfaceContainerLowest: const Color(0xFF141D2C),
+                surfaceContainerLow: const Color(0xFF182235),
+                surfaceContainer: const Color(0xFF1C283B),
+                surfaceContainerHigh: const Color(0xFF202D42),
+                surfaceContainerHighest: const Color(0xFF202D42),
+                outline: const Color(0xFF34445A),
+                outlineVariant: const Color(0xFF34445A),
+                inverseSurface: const Color(0xFFE8EEF7),
+                onInverseSurface: const Color(0xFF182235),
+              );
+
           return MaterialApp(
             themeMode: themeMode,
             title: 'AcademicHub',
@@ -76,12 +113,27 @@ class AcademicHub extends StatelessWidget {
             ),
 
             darkTheme: ThemeData(
-              brightness: Brightness.dark,
-              scaffoldBackgroundColor: const Color(0xFF121212),
-              cardColor: const Color(0xFF1E1E1E),
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: Colors.blue,
-                brightness: Brightness.dark,
+              colorScheme: darkColorScheme,
+              scaffoldBackgroundColor: const Color(0xFF101827),
+              cardColor: const Color(0xFF182235),
+              dividerColor: darkColorScheme.outlineVariant,
+              appBarTheme: AppBarTheme(
+                backgroundColor: darkColorScheme.surface,
+                foregroundColor: darkColorScheme.onSurface,
+              ),
+              inputDecorationTheme: InputDecorationTheme(
+                fillColor: darkColorScheme.surfaceContainerHighest,
+                hintStyle: TextStyle(color: darkColorScheme.onSurfaceVariant),
+              ),
+              dialogTheme: DialogThemeData(
+                backgroundColor: darkColorScheme.surface,
+              ),
+              bottomSheetTheme: BottomSheetThemeData(
+                backgroundColor: darkColorScheme.surface,
+              ),
+              snackBarTheme: SnackBarThemeData(
+                backgroundColor: darkColorScheme.surfaceContainerHighest,
+                contentTextStyle: TextStyle(color: darkColorScheme.onSurface),
               ),
             ),
             initialRoute: splashScreen,

@@ -1,6 +1,7 @@
 import 'package:academichub/business_logic/profile/account_settings_cubit.dart';
 import 'package:academichub/business_logic/theme/theme_cubit.dart';
 import 'package:academichub/data/model/profile/account_settings_model.dart';
+import 'package:academichub/presentation/theme/task_status_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,11 +38,10 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
-          'Account Settings',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: _buildHeader(),
         ),
-        centerTitle: false,
       ),
       body: BlocBuilder<AccountSettingsCubit, AccountSettingsState>(
         builder: (context, state) {
@@ -83,11 +83,36 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     );
   }
 
+  Widget _buildHeader() {
+    final colors = Theme.of(context).colorScheme;
+
+    return ListTile(
+      title: Text("Account settings", style: TextStyle(fontSize: 20)),
+      subtitle: Text(
+        "Make your workplace feel like you",
+        style: TextStyle(fontSize: 12),
+      ),
+      trailing: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: colors.adaptiveColor(
+            light: const Color.fromARGB(255, 223, 238, 249),
+            dark: colors.primaryContainer,
+          ),
+          borderRadius: BorderRadius.circular(15),
+        ),
+
+        child: Icon(Icons.gpp_good_outlined),
+      ),
+    );
+  }
+
   Widget _buildSettingsContent(
     AccountSettingsModel account,
     ColorScheme colors,
   ) {
-    final academicEmail = '${account.academicCode}';
+    final academicEmail = account.academicCode;
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [

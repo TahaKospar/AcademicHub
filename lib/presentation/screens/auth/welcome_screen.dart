@@ -1,4 +1,5 @@
 import 'package:academichub/constants/strings/strings.dart';
+import 'package:academichub/presentation/theme/task_status_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -50,10 +51,18 @@ class _WelcomescreenState extends State<Welcomescreen> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final med = mediaQuery.size.width;
+    final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colors.adaptiveColor(
+        light: Colors.white,
+        dark: colors.surfaceDim,
+      ),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: colors.adaptiveColor(
+          light: Colors.white,
+          dark: colors.surface,
+        ),
         centerTitle: true,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -71,7 +80,10 @@ class _WelcomescreenState extends State<Welcomescreen> {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: med * .05,
-                color: Colors.blue[900],
+                color: colors.adaptiveColor(
+                  light: Colors.blue.shade900,
+                  dark: colors.primary,
+                ),
               ),
             ),
           ],
@@ -134,8 +146,14 @@ class _WelcomescreenState extends State<Welcomescreen> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: _currentPage == index
-                        ? Colors.blueAccent
-                        : Colors.lightBlue[200],
+                        ? colors.adaptiveColor(
+                            light: Colors.blueAccent,
+                            dark: colors.primary,
+                          )
+                        : colors.adaptiveColor(
+                            light: Colors.lightBlue.shade200,
+                            dark: colors.primaryContainer,
+                          ),
                   ),
                 );
               }),
@@ -149,7 +167,14 @@ class _WelcomescreenState extends State<Welcomescreen> {
               child: _currentPage == _pages.length - 1
                   ? ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
+                        backgroundColor: colors.adaptiveColor(
+                          light: Colors.blueAccent,
+                          dark: colors.primary,
+                        ),
+                        foregroundColor: colors.adaptiveColor(
+                          light: Colors.white,
+                          dark: colors.onPrimary,
+                        ),
                         padding: EdgeInsets.symmetric(
                           horizontal: 40,
                           vertical: 14,
@@ -165,14 +190,20 @@ class _WelcomescreenState extends State<Welcomescreen> {
                             "Get Started",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Colors.white,
+                              color: colors.adaptiveColor(
+                                light: Colors.white,
+                                dark: colors.onPrimary,
+                              ),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Icon(
                             Icons.arrow_right_alt,
                             size: 25,
-                            color: Colors.white,
+                            color: colors.adaptiveColor(
+                              light: Colors.white,
+                              dark: colors.onPrimary,
+                            ),
                           ),
                         ],
                       ),
@@ -183,7 +214,14 @@ class _WelcomescreenState extends State<Welcomescreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           FloatingActionButton(
-                            backgroundColor: Colors.blueAccent,
+                            backgroundColor: colors.adaptiveColor(
+                              light: Colors.blueAccent,
+                              dark: colors.primary,
+                            ),
+                            foregroundColor: colors.adaptiveColor(
+                              light: Colors.white,
+                              dark: colors.onPrimary,
+                            ),
                             onPressed: () {
                               _controller.nextPage(
                                 duration: const Duration(milliseconds: 300),
@@ -193,7 +231,10 @@ class _WelcomescreenState extends State<Welcomescreen> {
                             child: Icon(
                               Icons.arrow_right_alt,
                               size: 25,
-                              color: Colors.white,
+                              color: colors.adaptiveColor(
+                                light: Colors.white,
+                                dark: colors.onPrimary,
+                              ),
                             ),
                           ),
                         ],

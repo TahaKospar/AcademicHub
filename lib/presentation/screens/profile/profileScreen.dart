@@ -2,6 +2,7 @@ import 'package:academichub/business_logic/profile/profile_cubit.dart';
 import 'package:academichub/constants/strings/strings.dart';
 import 'package:academichub/data/model/profile/profile_model.dart';
 import 'package:academichub/presentation/screens/profile/accountSettingsScreen.dart';
+import 'package:academichub/presentation/theme/task_status_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,23 +16,17 @@ class Profilescreen extends StatefulWidget {
   State<Profilescreen> createState() => _ProfilescreenState();
 }
 
-const Color primaryBlue = Color(0xFF2563EB);
-const Color backgroundColor = Color(0xFFF8FAFC);
-const Color backgroundSecondaryColor = Color.fromARGB(255, 223, 238, 249);
-const Color darkText = Color(0xFF0F172A);
-const Color secondaryText = Color(0xFF64748B);
-
 class _ProfilescreenState extends State<Profilescreen> {
-@override
-void initState() {
-  super.initState();
+  @override
+  void initState() {
+    super.initState();
 
-  final userId = FirebaseAuth.instance.currentUser?.uid;
+    final userId = FirebaseAuth.instance.currentUser?.uid;
 
-  if (userId != null) {
-    context.read<ProfileCubit>().fetchDashboardData(userId);
+    if (userId != null) {
+      context.read<ProfileCubit>().fetchDashboardData(userId);
+    }
   }
-}
 
   void _fetchDashboard() {
     final userId = FirebaseAuth.instance.currentUser?.uid;
@@ -70,8 +65,13 @@ void initState() {
   }
 
   Widget _buildDashboard(ProfileModel profileModel) {
+    final colors = Theme.of(context).colorScheme;
+
     return RefreshIndicator(
-      color: primaryBlue,
+      color: colors.adaptiveColor(
+        light: const Color(0xFF2563EB),
+        dark: colors.primary,
+      ),
       onRefresh: () async => _fetchDashboard(),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -104,6 +104,8 @@ void initState() {
   }
 
   Widget _buildHeader() {
+    final colors = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ListTile(
@@ -116,13 +118,19 @@ void initState() {
           height: 40,
           width: 40,
           decoration: BoxDecoration(
-            color: backgroundSecondaryColor,
+            color: colors.adaptiveColor(
+              light: const Color.fromARGB(255, 223, 238, 249),
+              dark: colors.primaryContainer,
+            ),
             borderRadius: BorderRadius.circular(15),
           ),
           child: IconButton(
             onPressed: () {},
             icon: Icon(Icons.settings_outlined),
-            color: const Color.fromARGB(255, 88, 166, 231),
+            color: colors.adaptiveColor(
+              light: const Color.fromARGB(255, 88, 166, 231),
+              dark: colors.onPrimaryContainer,
+            ),
           ),
         ),
       ),
@@ -137,10 +145,15 @@ void initState() {
     // userLevel,
     // String academicCode,
   ) {
+    final colors = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: colors.adaptiveColor(
+          light: const Color(0xFFF8FAFC),
+          dark: colors.surfaceContainerLow,
+        ),
         borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
@@ -151,14 +164,20 @@ void initState() {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 0, 107, 189),
+              color: colors.adaptiveColor(
+                light: const Color.fromARGB(255, 0, 107, 189),
+                dark: colors.primary,
+              ),
               borderRadius: BorderRadius.circular(60),
             ),
             alignment: Alignment.center,
             child: Text(
               "${model.userInitial}",
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: colors.adaptiveColor(
+                  light: Colors.white,
+                  dark: colors.onPrimary,
+                ),
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -182,7 +201,10 @@ void initState() {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(7),
-              color: Colors.green[200],
+              color: colors.adaptiveColor(
+                light: const Color.fromARGB(255, 165, 214, 167),
+                dark: colors.secondaryContainer,
+              ),
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -190,13 +212,22 @@ void initState() {
                 "${model.userLevel} • ${model.isActive}",
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: colors.adaptiveColor(
+                    light: Colors.black,
+                    dark: colors.onSecondaryContainer,
+                  ),
+                ),
               ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Divider(
-              color: Colors.grey.shade300,
+              color: colors.adaptiveColor(
+                light: Colors.grey.shade300,
+                dark: colors.outlineVariant,
+              ),
               thickness: 2,
               height: 20,
             ),
@@ -209,6 +240,8 @@ void initState() {
   }
 
   Widget _buildCountDone(ProfileModel model) {
+    final colors = Theme.of(context).colorScheme;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -216,7 +249,10 @@ void initState() {
           child: Container(
             width: 50,
             height: 90,
-            color: backgroundSecondaryColor,
+            color: colors.adaptiveColor(
+              light: const Color.fromARGB(255, 223, 238, 249),
+              dark: colors.surfaceContainerHighest,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -225,7 +261,10 @@ void initState() {
                   style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue[700],
+                    color: colors.adaptiveColor(
+                      light: Colors.blue.shade700,
+                      dark: colors.primary,
+                    ),
                   ),
                 ),
                 SizedBox(height: 5),
@@ -239,7 +278,10 @@ void initState() {
           child: Container(
             width: 50,
             height: 90,
-            color: backgroundSecondaryColor,
+            color: colors.adaptiveColor(
+              light: const Color.fromARGB(255, 223, 238, 249),
+              dark: colors.surfaceContainerHighest,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -248,7 +290,10 @@ void initState() {
                   style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue[700],
+                    color: colors.adaptiveColor(
+                      light: Colors.blue.shade700,
+                      dark: colors.primary,
+                    ),
                   ),
                 ),
                 SizedBox(height: 5),
@@ -262,6 +307,8 @@ void initState() {
   }
 
   Widget _buildLearning(ProfileModel model) {
+    final colors = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -275,7 +322,10 @@ void initState() {
               "${model.coursesDone} done courses",
               Icon(
                 Icons.menu_book,
-                color: const Color.fromARGB(255, 88, 166, 231),
+                color: colors.adaptiveColor(
+                  light: const Color.fromARGB(255, 88, 166, 231),
+                  dark: colors.primary,
+                ),
               ),
               Icon(Icons.chevron_right),
             ),
@@ -294,7 +344,10 @@ void initState() {
               "View your task reviews and replies",
               Icon(
                 Icons.chat_outlined,
-                color: const Color.fromARGB(255, 88, 166, 231),
+                color: colors.adaptiveColor(
+                  light: const Color.fromARGB(255, 88, 166, 231),
+                  dark: colors.primary,
+                ),
               ),
               Icon(Icons.chevron_right),
             ),
@@ -319,7 +372,10 @@ void initState() {
               "Personal details, security & Preference",
               Icon(
                 Icons.settings_outlined,
-                color: const Color.fromARGB(255, 88, 166, 231),
+                color: colors.adaptiveColor(
+                  light: const Color.fromARGB(255, 88, 166, 231),
+                  dark: colors.primary,
+                ),
               ),
               Icon(Icons.chevron_right),
             ),
@@ -338,7 +394,10 @@ void initState() {
               "Class updates, deadlines & messages",
               Icon(
                 Icons.notifications_none,
-                color: const Color.fromARGB(255, 88, 166, 231),
+                color: colors.adaptiveColor(
+                  light: const Color.fromARGB(255, 88, 166, 231),
+                  dark: colors.primary,
+                ),
               ),
               Icon(Icons.chevron_right),
             ),
@@ -354,7 +413,10 @@ void initState() {
               "Wer're here when you need us",
               Icon(
                 Icons.chat_outlined,
-                color: const Color.fromARGB(255, 88, 166, 231),
+                color: colors.adaptiveColor(
+                  light: const Color.fromARGB(255, 88, 166, 231),
+                  dark: colors.primary,
+                ),
               ),
               Icon(Icons.chevron_right),
             ),
@@ -365,8 +427,13 @@ void initState() {
   }
 
   Widget _listTile(String title, String subTitle, Icon leading, Icon trailing) {
+    final colors = Theme.of(context).colorScheme;
+
     return Card(
-      color: backgroundColor,
+      color: colors.adaptiveColor(
+        light: const Color(0xFFF8FAFC),
+        dark: colors.surface,
+      ),
       child: ListTile(
         title: Text(title),
         subtitle: Text(
@@ -377,7 +444,10 @@ void initState() {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: backgroundSecondaryColor,
+            color: colors.adaptiveColor(
+              light: const Color.fromARGB(255, 223, 238, 249),
+              dark: colors.primaryContainer,
+            ),
             borderRadius: BorderRadius.circular(15),
           ),
           child: leading,
@@ -388,6 +458,8 @@ void initState() {
   }
 
   Widget _finishPage() {
+    final colors = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -403,11 +475,20 @@ void initState() {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.logout, color: Colors.red),
+              Icon(
+                Icons.logout,
+                color: colors.adaptiveColor(
+                  light: Colors.red,
+                  dark: colors.error,
+                ),
+              ),
               Text(
                 "Log Out",
                 style: TextStyle(
-                  color: Colors.red,
+                  color: colors.adaptiveColor(
+                    light: Colors.red,
+                    dark: colors.error,
+                  ),
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
                 ),
@@ -430,29 +511,42 @@ void initState() {
   }
 
   Widget _buildError(String message) {
+    final colors = Theme.of(context).colorScheme;
+
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
+          Icon(
             Icons.error_outline_rounded,
-            color: Colors.redAccent,
+            color: colors.adaptiveColor(
+              light: Colors.redAccent,
+              dark: colors.error,
+            ),
             size: 45,
           ),
           const SizedBox(height: 12),
-          const Text(
+          Text(
             'Something went wrong',
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.bold,
-              color: darkText,
+              color: colors.adaptiveColor(
+                light: const Color(0xFF0F172A),
+                dark: colors.onSurface,
+              ),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             message,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: secondaryText),
+            style: TextStyle(
+              color: colors.adaptiveColor(
+                light: const Color(0xFF64748B),
+                dark: colors.onSurfaceVariant,
+              ),
+            ),
           ),
           const SizedBox(height: 18),
           ElevatedButton(
